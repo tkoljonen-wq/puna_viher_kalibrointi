@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fiksaatiodisparaatiotesti</title>
+  <style>
+    :root {
+      --bg: #e7e7e7;
+      --panel: #f8f8f8;
+      --text: #111;
+      --muted: #555;
+      --border: #222;
+      --test-bg: #cfcfcf;
+      --target-bg: #efefef;
+      --bar-red: #ff0000;
+      --bar-green: #00ff00;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 18px;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid #c8c8c8;
+      border-radius: 10px;
+    }
+
+    button {
+      border: 1px solid #333;
+      background: white;
+      color: #111;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button.active {
+      background: #111;
+      color: white;
+    }
+
+    .status {
+      margin-left: auto;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .stage {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 72vh;
+    }
+
+    .test-area {
+      position: relative;
+      background: var(--test-bg);
+      border: 2px solid var(--border);
+      width: min(92vw, 980px);
+      aspect-ratio: 1.55 / 1;
+      overflow: hidden;
+    }
+
+    .target-box {
+      position: absolute;
+      background: var(--target-bg);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .row-target {
+      width: 56%;
+      height: 15%;
+      left: 22%;
+      top: 42.5%;
+      flex-direction: row;
+    }
+
+    .col-target {
+      width: 20%;
+      height: 62%;
+      left: 40%;
+      top: 19%;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .ring {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      border: 14px solid #000;
+      border-radius: 50%;
+      background: transparent;
+      flex: 0 0 auto;
+    }
+
+    .cross {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      flex: 0 0 auto;
+    }
+
+    .cross::before,
+    .cross::after {
+      content: "";
+      position: absolute;
+      background: #000;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .cross::before {
+      width: 18px;
+      height: 72px;
+    }
+
+    .cross::after {
+      width: 72px;
+      height: 18px;
+    }
+
+    .bar {
+      position: absolute;
+    }
+
+    .h-green, .h-red {
+      width: 6%;
+      height: 28%;
+      left: 47%;
+    }
+
+    .h-green {
+      top: 13%;
+      background: var(--bar-green);
+    }
+
+    .h-red {
+      top: 59%;
+      background: var(--bar-red);
+    }
+
+    .v-green, .v-red {
+      width: 32%;
+      height: 7.5%;
+      top: 46.25%;
+    }
+
+    .v-green {
+      left: 5%;
+      background: var(--bar-green);
+    }
+
+    .v-red {
+      left: 63%;
+      background: var(--bar-red);
+    }
+
+    dialog {
+      border: 1px solid #444;
+      border-radius: 12px;
+      padding: 0;
+      width: min(92vw, 430px);
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .dialog-inner {
+      padding: 18px;
+    }
+
+    .dialog-inner h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #777;
+      border-radius: 8px;
+    }
+
+    .help {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .error {
+      color: #b00020;
+      min-height: 1.2em;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .legend {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--muted);
+      background: var(--panel);
+      border: 1px solid #c8c8c8;
+      border-radius: 10px;
+      padding: 10px 12px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 700px) {
+      .ring {
+        width: 44px;
+        height: 44px;
+        border-width: 10px;
+      }
+      .cross {
+        width: 50px;
+        height: 50px;
+      }
+      .cross::before {
+        width: 12px;
+        height: 50px;
+      }
+      .cross::after {
+        width: 50px;
+        height: 12px;
+      }
+      .row-target {
+        gap: 16px;
+      }
+      .col-target {
+        gap: 14px;
+      }
+      .toolbar {
+        padding: 10px;
+      }
+      .status {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <button id="showHorizontal" class="active" type="button">Vaakatesti</button>
+      <button id="showVertical" type="button">Pystytesti</button>
+      <button id="openCalibration" type="button">Kalibroi</button>
+      <button id="resetDefault" type="button">Palauta oletus</button>
+      <div class="status" id="statusText"></div>
+    </div>
+
+    <div class="stage">
+      <div class="test-area" id="testArea">
+        <div id="horizontalTest">
+          <div class="bar h-green"></div>
+          <div class="target-box row-target">
+            <div class="ring"></div>
+            <div class="cross"></div>
+            <div class="ring"></div>
+          </div>
+          <div class="bar h-red"></div>
+        </div>
+
+        <div id="verticalTest" hidden>
+          <div class="bar v-green"></div>
+          <div class="target-box col-target">
+            <div class="ring"></div>
+            <div class="cross"></div>
+            <div class="ring"></div>
+          </div>
+          <div class="bar v-red"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      Kalibroinnissa anna punaiselle ja vihreälle numerot 1–12. Ohjelma valitsee niiden perusteella ennalta määritetyt väriparametrit.
+      Tallennus tehdään selaimen paikalliseen muistiin, joten sama laite ja selain muistavat viimeksi käytetyt asetukset.
+    </div>
+  </div>
+
+  <dialog id="calibrationDialog">
+    <form method="dialog" class="dialog-inner" id="calibrationForm">
+      <h2>Kalibroi</h2>
+      <div class="help">
+        Syötä paras kalibrointinumero punaiselle ja vihreälle. Sallitut arvot ovat 1–12.
+      </div>
+
+      <div class="field">
+        <label for="redIndex">Punainen (1–12)</label>
+        <input id="redIndex" name="redIndex" type="number" min="1" max="12" step="1" required />
+      </div>
+
+      <div class="field">
+        <label for="greenIndex">Vihreä (1–12)</label>
+        <input id="greenIndex" name="greenIndex" type="number" min="1" max="12" step="1" required />
+      </div>
+
+      <div class="error" id="errorText"></div>
+
+      <div class="dialog-actions">
+        <button type="button" id="cancelCalibration">Peruuta</button>
+        <button type="submit">Tallenna</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    // 12 esiasetettua punaista sävyä kalibrointiohjelman numerovalintaa varten.
+    // Muokkaa näitä arvoja tarvittaessa vastaamaan aiemman kalibrointiohjelman asteikkoa.
+    const RED_PRESETS = {
+      1: '#ff4040',
+      2: '#ff3535',
+      3: '#ff2a2a',
+      4: '#ff2020',
+      5: '#ff1515',
+      6: '#ff0a0a',
+      7: '#ff0000',
+      8: '#f00000',
+      9: '#e00000',
+      10: '#d00000',
+      11: '#c00000',
+      12: '#b00000'
+    };
+
+    // 12 esiasetettua vihreää sävyä. Tässä käytetään hieman cyan-suuntaista vihreää,
+    // koska liitekuvassasi vihreä palkki näyttää sinivihreältä.
+    const GREEN_PRESETS = {
+      1: '#7be9ee',
+      2: '#71e3e8',
+      3: '#67dde2',
+      4: '#5ed7dc',
+      5: '#54d1d6',
+      6: '#4bcbd0',
+      7: '#42c5ca',
+      8: '#39bfc4',
+      9: '#31b9be',
+      10: '#29b3b8',
+      11: '#21adb2',
+      12: '#19a7ac'
+    };
+
+    const STORAGE_KEY = 'fd_test_calibration_v1';
+
+    const horizontalBtn = document.getElementById('showHorizontal');
+    const verticalBtn = document.getElementById('showVertical');
+    const openCalibrationBtn = document.getElementById('openCalibration');
+    const resetDefaultBtn = document.getElementById('resetDefault');
+    const horizontalTest = document.getElementById('horizontalTest');
+    const verticalTest = document.getElementById('verticalTest');
+    const statusText = document.getElementById('statusText');
+    const calibrationDialog = document.getElementById('calibrationDialog');
+    const calibrationForm = document.getElementById('calibrationForm');
+    const redIndexInput = document.getElementById('redIndex');
+    const greenIndexInput = document.getElementById('greenIndex');
+    const errorText = document.getElementById('errorText');
+    const cancelCalibrationBtn = document.getElementById('cancelCalibration');
+
+    function getSavedCalibration() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return { redIndex: 7, greenIndex: 7 };
+        const parsed = JSON.parse(raw);
+        return {
+          redIndex: clampIndex(parsed.redIndex),
+          greenIndex: clampIndex(parsed.greenIndex)
+        };
+      } catch {
+        return { redIndex: 7, greenIndex: 7 };
+      }
+    }
+
+    function saveCalibration(redIndex, greenIndex) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ redIndex, greenIndex }));
+    }
+
+    function clampIndex(value) {
+      const n = Number(value);
+      if (!Number.isInteger(n) || n < 1 || n > 12) return 7;
+      return n;
+    }
+
+    function applyCalibration(redIndex, greenIndex) {
+      const red = RED_PRESETS[clampIndex(redIndex)];
+      const green = GREEN_PRESETS[clampIndex(greenIndex)];
+      document.documentElement.style.setProperty('--bar-red', red);
+      document.documentElement.style.setProperty('--bar-green', green);
+      statusText.textContent = `Punainen ${clampIndex(redIndex)} (${red}) · Vihreä ${clampIndex(greenIndex)} (${green})`;
+    }
+
+    function showHorizontal() {
+      horizontalTest.hidden = false;
+      verticalTest.hidden = true;
+      horizontalBtn.classList.add('active');
+      verticalBtn.classList.remove('active');
+    }
+
+    function showVertical() {
+      horizontalTest.hidden = true;
+      verticalTest.hidden = false;
+      horizontalBtn.classList.remove('active');
+      verticalBtn.classList.add('active');
+    }
+
+    horizontalBtn.addEventListener('click', showHorizontal);
+    verticalBtn.addEventListener('click', showVertical);
+
+    openCalibrationBtn.addEventListener('click', () => {
+      const saved = getSavedCalibration();
+      redIndexInput.value = saved.redIndex;
+      greenIndexInput.value = saved.greenIndex;
+      errorText.textContent = '';
+      calibrationDialog.showModal();
+    });
+
+    cancelCalibrationBtn.addEventListener('click', () => {
+      calibrationDialog.close();
+    });
+
+    resetDefaultBtn.addEventListener('click', () => {
+      saveCalibration(7, 7);
+      applyCalibration(7, 7);
+    });
+
+    calibrationForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const redIndex = Number(redIndexInput.value);
+      const greenIndex = Number(greenIndexInput.value);
+
+      if (!Number.isInteger(redIndex) || redIndex < 1 || redIndex > 12 ||
+          !Number.isInteger(greenIndex) || greenIndex < 1 || greenIndex > 12) {
+        errorText.textContent = 'Anna molempiin kenttiin kokonaisluku väliltä 1–12.';
+        return;
+      }
+
+      saveCalibration(redIndex, greenIndex);
+      applyCalibration(redIndex, greenIndex);
+      calibrationDialog.close();
+    });
+
+    const initial = getSavedCalibration();
+    applyCalibration(initial.redIndex, initial.greenIndex);
+  </script>
+</body>
+</html>
