@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Puna-vihreäkalibrointi</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --panel: #111111;
+      --panel-border: #2a2a2a;
+      --text: #f2f2f2;
+      --muted: #b0b0b0;
+      --accent: #5aa9ff;
+      --danger: #ff6b6b;
+      --ok: #6bff8a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--panel-border);
+      background: #090909;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .main {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 100vh;
+    }
+
+    .topbar, .bottombar {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .bottombar {
+      border-top: 1px solid var(--panel-border);
+      border-bottom: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    .small { color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .mono { font-family: Consolas, Monaco, monospace; }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .canvas-wrap {
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .canvas {
+      width: min(78vmin, 820px);
+      height: min(78vmin, 820px);
+      display: grid;
+      place-items: center;
+      position: relative;
+      border: 1px solid #1d1d1d;
+      background: #000000;
+    }
+
+    .shape-label {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #d0d0d0;
+      font-size: 18px;
+      letter-spacing: 0.03em;
+    }
+
+    .shape {
+      width: 340px;
+      height: 340px;
+      position: relative;
+    }
+
+    .cross::before,
+    .cross::after {
+      content: "";
+      position: absolute;
+      background: var(--shape-color);
+      border-radius: 4px;
+    }
+
+    .cross::before {
+      width: 84px;
+      height: 340px;
+      left: 128px;
+      top: 0;
+    }
+
+    .cross::after {
+      width: 340px;
+      height: 84px;
+      left: 0;
+      top: 128px;
+    }
+
+    .rings {
+      display: grid;
+      place-items: center;
+    }
+
+    .ring {
+      position: absolute;
+      border: 20px solid var(--shape-color);
+      border-radius: 50%;
+    }
+
+    .ring.r1 { width: 340px; height: 340px; }
+    .ring.r2 { width: 230px; height: 230px; }
+    .ring.r3 { width: 120px; height: 120px; }
+
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+    button, input {
+      font: inherit;
+      border-radius: 10px;
+      border: 1px solid #3a3a3a;
+      padding: 10px 12px;
+    }
+
+    button {
+      background: #171717;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    button:hover { background: #202020; }
+
+    input {
+      background: #0f0f0f;
+      color: var(--text);
+      width: 120px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #1a1a1a;
+      border: 1px solid #333333;
+      font-size: 13px;
+    }
+
+    .current-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid #555;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 8px;
+      background: var(--shape-color);
+    }
+
+    .big-number {
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1;
+      margin-top: 8px;
+    }
+
+    .status {
+      font-size: 15px;
+      color: var(--muted);
+      min-height: 22px;
+    }
+
+    .success { color: var(--ok); }
+    .error { color: var(--danger); }
+
+    .results-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      margin-top: 12px;
+    }
+
+    .result-swatch {
+      width: 64px;
+      height: 64px;
+      border-radius: 10px;
+      border: 1px solid #555;
+      margin-top: 10px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 980px) {
+      body { grid-template-columns: 1fr; }
+      .sidebar { border-right: none; border-bottom: 1px solid var(--panel-border); }
+      .canvas { width: min(92vw, 820px); height: min(92vw, 820px); }
+      .shape { transform: scale(0.82); }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div>
+      <h1>Puna–viherkalibrointi</h1>
+      <p class="small" style="margin-top:8px;">Työkalu hakee näytölle parhaiten toimivat punaisen ja vihreän sävyt anaglyfiseen optikkotestiin.</p>
+    </div>
+
+    <div class="card">
+      <h2>Vaiheet</h2>
+      <p class="small" style="margin-top:8px;">1. Katso vihreän linssin läpi ja etsi punainen sävy, joka häviää parhaiten.</p>
+      <p class="small" style="margin-top:6px;">2. Katso punaisen linssin läpi ja etsi vihreä sävy, joka häviää parhaiten.</p>
+      <p class="small" style="margin-top:6px;">3. Ohjelma näyttää valitut värikoordinaatit.</p>
+    </div>
+
+    <div class="card">
+      <h2>Näppäimet</h2>
+      <p class="small" style="margin-top:8px;">← / ↑ = edellinen vaihtoehto</p>
+      <p class="small" style="margin-top:6px;">→ / ↓ = seuraava vaihtoehto</p>
+      <p class="small" style="margin-top:6px;">Enter = vahvista kenttään kirjoitettu numero</p>
+      <p class="small" style="margin-top:6px;">R = aloita alusta</p>
+    </div>
+
+    <div class="card">
+      <h2>Nykyinen vaihtoehto</h2>
+      <div class="big-number" id="optionNumber">1</div>
+      <div class="row" style="margin-top:10px;">
+        <span class="badge mono" id="hexValue">#FF0000</span>
+        <span class="current-swatch" id="currentSwatch"></span>
+      </div>
+      <p class="small mono" id="rgbValue" style="margin-top:10px;">rgb(255, 0, 0)</p>
+    </div>
+
+    <div class="card">
+      <h2>Valinnat</h2>
+      <p class="small" id="redChoiceText" style="margin-top:8px;">Punainen: ei vielä valittu</p>
+      <p class="small" id="greenChoiceText" style="margin-top:6px;">Vihreä: ei vielä valittu</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <h2 id="phaseTitle">Vaihe 1: punaisen kalibrointi</h2>
+      <p class="small" id="phaseInstruction" style="margin-top:6px;">Katso vihreän linssin läpi. Vaihda nuolinäppäimillä vaihtoehtoja ja etsi punainen sävy, joka häviää parhaiten.</p>
+    </div>
+
+    <div class="canvas-wrap">
+      <div class="canvas" id="canvas">
+        <div class="shape-label" id="shapeLabel">Punainen risti</div>
+        <div class="shape cross" id="shape" aria-hidden="true"></div>
+
+        <div id="resultsPanel" class="card hidden" style="max-width:760px; width:min(92%,760px);">
+          <h2>Kalibrointi valmis</h2>
+          <p class="small" style="margin-top:8px;">Alla ovat valitut värit. Näitä voit käyttää varsinaisessa testissä tai jatkosäätää myöhemmin.</p>
+          <div class="results-grid">
+            <div class="card">
+              <h3>Punainen</h3>
+              <p class="small" id="resultRedIndex" style="margin-top:8px;"></p>
+              <p class="small mono" id="resultRedHex" style="margin-top:6px;"></p>
+              <p class="small mono" id="resultRedRgb" style="margin-top:6px;"></p>
+              <div class="result-swatch" id="resultRedSwatch"></div>
+            </div>
+            <div class="card">
+              <h3>Vihreä</h3>
+              <p class="small" id="resultGreenIndex" style="margin-top:8px;"></p>
+              <p class="small mono" id="resultGreenHex" style="margin-top:6px;"></p>
+              <p class="small mono" id="resultGreenRgb" style="margin-top:6px;"></p>
+              <div class="result-swatch" id="resultGreenSwatch"></div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:12px;">
+            <h3>Kopioitavat arvot</h3>
+            <p class="small mono" id="copyBlock" style="margin-top:8px; white-space:pre-wrap;"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottombar">
+      <label for="choiceInput">Valitse paras vaihtoehto:</label>
+      <input id="choiceInput" type="number" min="1" step="1" inputmode="numeric" placeholder="Numero" />
+      <button id="confirmBtn" type="button">Vahvista</button>
+      <button id="prevBtn" type="button">Edellinen</button>
+      <button id="nextBtn" type="button">Seuraava</button>
+      <button id="restartBtn" type="button">Aloita alusta</button>
+      <span class="status" id="status"></span>
+    </div>
+  </main>
+
+  <script>
+    const redOptions = [
+      { hex: '#FF0000' },
+      { hex: '#F00000' },
+      { hex: '#E00000' },
+      { hex: '#D00000' },
+      { hex: '#C00000' },
+      { hex: '#B00000' },
+      { hex: '#FF1010' },
+      { hex: '#FF2000' },
+      { hex: '#FF3000' },
+      { hex: '#E01010' },
+      { hex: '#D02020' },
+      { hex: '#CC1010' }
+    ];
+
+    const greenOptions = [
+      { hex: '#00FF00' },
+      { hex: '#00F000' },
+      { hex: '#00E000' },
+      { hex: '#00D000' },
+      { hex: '#00CC00' },
+      { hex: '#00C000' },
+      { hex: '#00B000' },
+      { hex: '#10FF10' },
+      { hex: '#20E020' },
+      { hex: '#00AA00' },
+      { hex: '#008F00' },
+      { hex: '#007A00' }
+    ];
+
+    const state = {
+      phase: 'red',
+      index: 0,
+      redChoice: null,
+      greenChoice: null
+    };
+
+    const optionNumber = document.getElementById('optionNumber');
+    const hexValue = document.getElementById('hexValue');
+    const rgbValue = document.getElementById('rgbValue');
+    const currentSwatch = document.getElementById('currentSwatch');
+    const phaseTitle = document.getElementById('phaseTitle');
+    const phaseInstruction = document.getElementById('phaseInstruction');
+    const shape = document.getElementById('shape');
+    const shapeLabel = document.getElementById('shapeLabel');
+    const choiceInput = document.getElementById('choiceInput');
+    const statusEl = document.getElementById('status');
+    const redChoiceText = document.getElementById('redChoiceText');
+    const greenChoiceText = document.getElementById('greenChoiceText');
+    const resultsPanel = document.getElementById('resultsPanel');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    function hexToRgb(hex) {
+      const clean = hex.replace('#', '');
+      const bigint = parseInt(clean, 16);
+      return {
+        r: (bigint >> 16) & 255,
+        g: (bigint >> 8) & 255,
+        b: bigint & 255
+      };
+    }
+
+    function currentOptions() {
+      return state.phase === 'red' ? redOptions : greenOptions;
+    }
+
+    function getCurrentColor() {
+      return currentOptions()[state.index].hex;
+    }
+
+    function setStatus(message = '', type = '') {
+      statusEl.textContent = message;
+      statusEl.className = `status ${type}`.trim();
+    }
+
+    function updateChoiceTexts() {
+      if (state.redChoice) {
+        redChoiceText.textContent = `Punainen: vaihtoehto ${state.redChoice.index} (${state.redChoice.hex})`;
+      } else {
+        redChoiceText.textContent = 'Punainen: ei vielä valittu';
+      }
+
+      if (state.greenChoice) {
+        greenChoiceText.textContent = `Vihreä: vaihtoehto ${state.greenChoice.index} (${state.greenChoice.hex})`;
+      } else {
+        greenChoiceText.textContent = 'Vihreä: ei vielä valittu';
+      }
+    }
+
+    function render() {
+      if (state.phase === 'done') {
+        optionNumber.textContent = '—';
+        hexValue.textContent = 'Valmis';
+        rgbValue.textContent = '';
+        currentSwatch.style.background = '#000000';
+        phaseTitle.textContent = 'Kalibrointi valmis';
+        phaseInstruction.textContent = 'Alla näkyvät valitsemasi värit ja niiden koordinaatit.';
+        shape.classList.add('hidden');
+        shapeLabel.classList.add('hidden');
+        resultsPanel.classList.remove('hidden');
+        choiceInput.disabled = true;
+        confirmBtn.disabled = true;
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        return;
+      }
+
+      const hex = getCurrentColor();
+      const rgb = hexToRgb(hex);
+
+      resultsPanel.classList.add('hidden');
+      shape.classList.remove('hidden');
+      shapeLabel.classList.remove('hidden');
+      choiceInput.disabled = false;
+      confirmBtn.disabled = false;
+      prevBtn.disabled = false;
+      nextBtn.disabled = false;
+
+      optionNumber.textContent = String(state.index + 1);
+      hexValue.textContent = hex;
+      rgbValue.textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+      currentSwatch.style.background = hex;
+      document.documentElement.style.setProperty('--shape-color', hex);
+
+      if (state.phase === 'red') {
+        phaseTitle.textContent = 'Vaihe 1: punaisen kalibrointi';
+        phaseInstruction.textContent = 'Katso vihreän linssin läpi. Vaihda nuolinäppäimillä vaihtoehtoja ja etsi punainen sävy, joka häviää parhaiten.';
+        shape.className = 'shape cross';
+        shapeLabel.textContent = 'Punainen risti';
+      } else {
+        phaseTitle.textContent = 'Vaihe 2: vihreän kalibrointi';
+        phaseInstruction.textContent = 'Katso punaisen linssin läpi. Vaihda nuolinäppäimillä vaihtoehtoja ja etsi vihreä sävy, joka häviää parhaiten.';
+        shape.className = 'shape rings';
+        shape.innerHTML = '<div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>';
+        shapeLabel.textContent = 'Vihreät ympyrät';
+      }
+
+      if (state.phase === 'red') {
+        shape.innerHTML = '';
+      }
+
+      choiceInput.placeholder = `1–${currentOptions().length}`;
+      updateChoiceTexts();
+    }
+
+    function move(step) {
+      if (state.phase === 'done') return;
+      const options = currentOptions();
+      state.index = (state.index + step + options.length) % options.length;
+      setStatus('');
+      render();
+    }
+
+    function finish() {
+      state.phase = 'done';
+      const rr = hexToRgb(state.redChoice.hex);
+      const gg = hexToRgb(state.greenChoice.hex);
+
+      document.getElementById('resultRedIndex').textContent = `Vaihtoehto ${state.redChoice.index}`;
+      document.getElementById('resultRedHex').textContent = `Hex: ${state.redChoice.hex}`;
+      document.getElementById('resultRedRgb').textContent = `RGB: (${rr.r}, ${rr.g}, ${rr.b})`;
+      document.getElementById('resultRedSwatch').style.background = state.redChoice.hex;
+
+      document.getElementById('resultGreenIndex').textContent = `Vaihtoehto ${state.greenChoice.index}`;
+      document.getElementById('resultGreenHex').textContent = `Hex: ${state.greenChoice.hex}`;
+      document.getElementById('resultGreenRgb').textContent = `RGB: (${gg.r}, ${gg.g}, ${gg.b})`;
+      document.getElementById('resultGreenSwatch').style.background = state.greenChoice.hex;
+
+      document.getElementById('copyBlock').textContent =
+`redHex: ${state.redChoice.hex}\nredRgb: ${rr.r}, ${rr.g}, ${rr.b}\ngreenHex: ${state.greenChoice.hex}\ngreenRgb: ${gg.r}, ${gg.g}, ${gg.b}`;
+
+      setStatus('Kalibrointi valmis.', 'success');
+      render();
+    }
+
+    function confirmSelection() {
+      if (state.phase === 'done') return;
+      const raw = choiceInput.value.trim();
+      const n = Number(raw);
+      const options = currentOptions();
+
+      if (!Number.isInteger(n) || n < 1 || n > options.length) {
+        setStatus(`Syötä numero väliltä 1–${options.length}.`, 'error');
+        return;
+      }
+
+      const chosen = { index: n, hex: options[n - 1].hex };
+
+      if (state.phase === 'red') {
+        state.redChoice = chosen;
+        state.phase = 'green';
+        state.index = 0;
+        choiceInput.value = '';
+        setStatus(`Punainen tallennettu: vaihtoehto ${chosen.index} ${chosen.hex}`, 'success');
+      } else {
+        state.greenChoice = chosen;
+        choiceInput.value = '';
+        finish();
+        return;
+      }
+
+      render();
+    }
+
+    function restart() {
+      state.phase = 'red';
+      state.index = 0;
+      state.redChoice = null;
+      state.greenChoice = null;
+      choiceInput.value = '';
+      shape.innerHTML = '';
+      setStatus('Kalibrointi nollattu.', 'success');
+      render();
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        move(-1);
+      } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+        event.preventDefault();
+        move(1);
+      } else if (event.key === 'Enter') {
+        if (document.activeElement === choiceInput || document.activeElement === document.body) {
+          event.preventDefault();
+          confirmSelection();
+        }
+      } else if (event.key.toLowerCase() === 'r') {
+        event.preventDefault();
+        restart();
+      }
+    });
+
+    confirmBtn.addEventListener('click', confirmSelection);
+    prevBtn.addEventListener('click', () => move(-1));
+    nextBtn.addEventListener('click', () => move(1));
+    restartBtn.addEventListener('click', restart);
+
+    render();
+  </script>
+</body>
+</html>
