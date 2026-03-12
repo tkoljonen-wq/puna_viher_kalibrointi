@@ -352,38 +352,35 @@
   </dialog>
 
   <script>
-    // 12 esiasetettua punaista sävyä kalibrointiohjelman numerovalintaa varten.
-    // Muokkaa näitä arvoja tarvittaessa vastaamaan aiemman kalibrointiohjelman asteikkoa.
+    // Esiasetetut värisävyt poimittu kalibrointiohjelman datasta.
     const RED_PRESETS = {
-      1: '#ff4040',
-      2: '#ff3535',
-      3: '#ff2a2a',
-      4: '#ff2020',
-      5: '#ff1515',
-      6: '#ff0a0a',
-      7: '#ff0000',
-      8: '#f00000',
-      9: '#e00000',
-      10: '#d00000',
-      11: '#c00000',
-      12: '#b00000'
+      1: '#FF0000',
+      2: '#F00000',
+      3: '#E00000',
+      4: '#D00000',
+      5: '#C00000',
+      6: '#B00000',
+      7: '#FF1010',
+      8: '#FF2000',
+      9: '#FF3000',
+      10: '#E01010',
+      11: '#D02020',
+      12: '#CC1010'
     };
 
-    // 12 esiasetettua vihreää sävyä. Tässä käytetään hieman cyan-suuntaista vihreää,
-    // koska liitekuvassasi vihreä palkki näyttää sinivihreältä.
     const GREEN_PRESETS = {
-      1: '#7be9ee',
-      2: '#71e3e8',
-      3: '#67dde2',
-      4: '#5ed7dc',
-      5: '#54d1d6',
-      6: '#4bcbd0',
-      7: '#42c5ca',
-      8: '#39bfc4',
-      9: '#31b9be',
-      10: '#29b3b8',
-      11: '#21adb2',
-      12: '#19a7ac'
+      1: '#00FF00',
+      2: '#00F000',
+      3: '#00E000',
+      4: '#00D000',
+      5: '#00CC00',
+      6: '#00C000',
+      7: '#00B000',
+      8: '#10FF10',
+      9: '#20E020',
+      10: '#00AA00',
+      11: '#008F00',
+      12: '#007A00'
     };
 
     const STORAGE_KEY = 'fd_test_calibration_v1';
