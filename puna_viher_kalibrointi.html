@@ -3,23 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Puna-vihreäkalibrointi</title>
+  <title>Puna–viherkalibrointi</title>
   <style>
     :root {
-      --bg: #000000;
-      --panel: #111111;
+      --bg: #000;
+      --panel: #111;
       --panel-border: #2a2a2a;
       --text: #f2f2f2;
       --muted: #b0b0b0;
-      --accent: #5aa9ff;
-      --danger: #ff6b6b;
       --ok: #6bff8a;
-      --shape-color: #FF0000;
-      --line-px: 1133.86px;
+      --danger: #ff6b6b;
+      --shape-color: #ff0000;
+      --mm-line-px: 300px;
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       background: var(--bg);
@@ -29,7 +26,6 @@
       display: grid;
       grid-template-columns: 360px 1fr;
     }
-
     .sidebar {
       border-right: 1px solid var(--panel-border);
       background: #090909;
@@ -38,27 +34,15 @@
       flex-direction: column;
       gap: 16px;
     }
-
     .main {
       display: grid;
-      grid-template-rows: auto auto 1fr auto;
+      grid-template-rows: auto 1fr auto;
       min-height: 100vh;
     }
-
-    .topbar, .subbar, .bottombar {
+    .topbar, .bottombar {
       padding: 16px 20px;
       border-bottom: 1px solid var(--panel-border);
     }
-
-    .subbar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 28px;
-      padding-top: 12px;
-      padding-bottom: 12px;
-    }
-
     .bottombar {
       border-top: 1px solid var(--panel-border);
       border-bottom: none;
@@ -67,27 +51,15 @@
       gap: 12px;
       align-items: center;
     }
-
-    h1, h2, h3, p { margin: 0; }
+    h1,h2,h3,p { margin: 0; }
     .small { color: var(--muted); font-size: 14px; line-height: 1.45; }
     .mono { font-family: Consolas, Monaco, monospace; }
-
     .card {
       background: var(--panel);
       border: 1px solid var(--panel-border);
       border-radius: 12px;
       padding: 14px;
     }
-
-    .reference-line {
-      width: var(--line-px);
-      max-width: calc(100vw - 440px);
-      height: 4px;
-      background: #000000;
-      border-radius: 999px;
-      box-shadow: 0 0 0 1px #3a3a3a;
-    }
-
     .canvas-wrap {
       display: grid;
       place-items: center;
@@ -95,7 +67,6 @@
       position: relative;
       overflow: hidden;
     }
-
     .canvas {
       width: min(78vmin, 820px);
       height: min(78vmin, 820px);
@@ -103,156 +74,64 @@
       place-items: center;
       position: relative;
       border: 1px solid #1d1d1d;
-      background: #000000;
+      background: #000;
     }
-
+    .verify-line {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: var(--mm-line-px);
+      height: 4px;
+      background: #000;
+      outline: 1px solid #444;
+    }
     .shape-label {
       position: absolute;
-      top: 20px;
+      top: 56px;
       left: 50%;
       transform: translateX(-50%);
       color: #d0d0d0;
       font-size: 18px;
-      letter-spacing: 0.03em;
     }
-
-    .shape {
-      width: 340px;
-      height: 340px;
-      position: relative;
-    }
-
-    .cross::before,
-    .cross::after {
+    .shape { width: 340px; height: 340px; position: relative; }
+    .cross::before, .cross::after {
       content: "";
       position: absolute;
       background: var(--shape-color);
       border-radius: 4px;
     }
-
-    .cross::before {
-      width: 84px;
-      height: 340px;
-      left: 128px;
-      top: 0;
-    }
-
-    .cross::after {
-      width: 340px;
-      height: 84px;
-      left: 0;
-      top: 128px;
-    }
-
+    .cross::before { width: 84px; height: 340px; left: 128px; top: 0; }
+    .cross::after { width: 340px; height: 84px; left: 0; top: 128px; }
     .rings { display: grid; place-items: center; }
-    .ring {
-      position: absolute;
-      border: 20px solid var(--shape-color);
-      border-radius: 50%;
-    }
-
+    .ring { position: absolute; border: 20px solid var(--shape-color); border-radius: 50%; }
     .ring.r1 { width: 340px; height: 340px; }
     .ring.r2 { width: 230px; height: 230px; }
     .ring.r3 { width: 120px; height: 120px; }
-
     .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-
     button, input {
       font: inherit;
       border-radius: 10px;
       border: 1px solid #3a3a3a;
       padding: 10px 12px;
     }
-
     button { background: #171717; color: var(--text); cursor: pointer; }
     button:hover { background: #202020; }
-
     input { background: #0f0f0f; color: var(--text); width: 120px; }
-
-    .badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: #1a1a1a;
-      border: 1px solid #333333;
-      font-size: 13px;
-    }
-
-    .current-swatch {
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      border: 1px solid #555;
-      display: inline-block;
-      vertical-align: middle;
-      margin-left: 8px;
-      background: var(--shape-color);
-    }
-
-    .big-number {
-      font-size: 48px;
-      font-weight: 700;
-      line-height: 1;
-      margin-top: 8px;
-    }
-
-    .status {
-      font-size: 15px;
-      color: var(--muted);
-      min-height: 22px;
-    }
-
+    .badge { display: inline-block; padding: 6px 10px; border-radius: 999px; background: #1a1a1a; border: 1px solid #333; font-size: 13px; }
+    .current-swatch { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #555; display: inline-block; vertical-align: middle; margin-left: 8px; background: var(--shape-color); }
+    .big-number { font-size: 48px; font-weight: 700; line-height: 1; margin-top: 8px; }
+    .status { font-size: 15px; color: var(--muted); min-height: 22px; }
     .success { color: var(--ok); }
     .error { color: var(--danger); }
-
-    .results-grid {
-      display: grid;
-      gap: 12px;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      margin-top: 12px;
-    }
-
-    .result-swatch {
-      width: 64px;
-      height: 64px;
-      border-radius: 10px;
-      border: 1px solid #555;
-      margin-top: 10px;
-    }
-
+    .results-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 12px; }
+    .result-swatch { width: 64px; height: 64px; border-radius: 10px; border: 1px solid #555; margin-top: 10px; }
     .hidden { display: none !important; }
-
-    .line-calibration {
-      display: grid;
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .line-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .line-value {
-      font-size: 24px;
-      font-weight: 700;
-    }
-
-    .warn {
-      color: #ffd36b;
-      font-size: 14px;
-      line-height: 1.45;
-      margin-top: 8px;
-    }
-
     @media (max-width: 980px) {
       body { grid-template-columns: 1fr; }
       .sidebar { border-right: none; border-bottom: 1px solid var(--panel-border); }
       .canvas { width: min(92vw, 820px); height: min(92vw, 820px); }
       .shape { transform: scale(0.82); }
-      .reference-line { max-width: calc(100vw - 40px); }
     }
   </style>
 </head>
@@ -260,14 +139,14 @@
   <aside class="sidebar">
     <div>
       <h1>Puna–viherkalibrointi</h1>
-      <p class="small" style="margin-top:8px;">Työkalu hakee näytölle parhaiten toimivat punaisen ja vihreän sävyt anaglyfiseen optikkotestiin ja tallentaa lisäksi näytön fyysisen mittakaavan.</p>
+      <p class="small" style="margin-top:8px;">Kalibroi ensin punainen ja vihreä. Tee sen jälkeen mittakalibrointi 300 mm viivalla.</p>
     </div>
 
     <div class="card">
       <h2>Vaiheet</h2>
-      <p class="small" style="margin-top:8px;">1. Katso vihreän linssin läpi ja etsi punainen sävy, joka häviää parhaiten.</p>
-      <p class="small" style="margin-top:6px;">2. Katso punaisen linssin läpi ja etsi vihreä sävy, joka häviää parhaiten.</p>
-      <p class="small" style="margin-top:6px;">3. Avaa näyttökalibrointi, säädä musta viiva täsmälleen 300 mm pituiseksi ja kopioi px/mm-arvo testiohjelmaan.</p>
+      <p class="small" style="margin-top:8px;">1. Katso vihreän linssin läpi ja valitse punainen sävy 1–12.</p>
+      <p class="small" style="margin-top:6px;">2. Katso punaisen linssin läpi ja valitse vihreä sävy 1–12.</p>
+      <p class="small" style="margin-top:6px;">3. Paina <b>Mittakalibrointi</b> ja säädä viiva tasan 300 mm pitkäksi.</p>
     </div>
 
     <div class="card">
@@ -292,7 +171,7 @@
       <h2>Valinnat</h2>
       <p class="small" id="redChoiceText" style="margin-top:8px;">Punainen: ei vielä valittu</p>
       <p class="small" id="greenChoiceText" style="margin-top:6px;">Vihreä: ei vielä valittu</p>
-      <p class="warn" id="zoomNotice">Selainzoomin pitää olla 100 %. Tarkista 300 mm viiva aina mittatikulla.</p>
+      <p class="small" id="mmChoiceText" style="margin-top:6px;">Mittakalibrointi: ei vielä tehty</p>
     </div>
   </aside>
 
@@ -302,18 +181,15 @@
       <p class="small" id="phaseInstruction" style="margin-top:6px;">Katso vihreän linssin läpi. Vaihda nuolinäppäimillä vaihtoehtoja ja etsi punainen sävy, joka häviää parhaiten.</p>
     </div>
 
-    <div class="subbar">
-      <div class="reference-line" id="referenceLine"></div>
-    </div>
-
     <div class="canvas-wrap">
       <div class="canvas" id="canvas">
+        <div class="verify-line hidden" id="verifyLine"></div>
         <div class="shape-label" id="shapeLabel">Punainen risti</div>
         <div class="shape cross" id="shape" aria-hidden="true"></div>
 
-        <div id="resultsPanel" class="card hidden" style="max-width:860px; width:min(92%,860px);">
+        <div id="resultsPanel" class="card hidden" style="max-width:760px; width:min(92%,760px);">
           <h2>Kalibrointi valmis</h2>
-          <p class="small" style="margin-top:8px;">Alla ovat valitut värit ja näyttökalibrointi. Syötä px/mm-arvo fiksaatiodisparaatiotestin kalibrointitietoihin.</p>
+          <p class="small" style="margin-top:8px;">Alla ovat valitut värit ja mittakalibrointi. Syötä nämä tutkimusohjelmaan.</p>
           <div class="results-grid">
             <div class="card">
               <h3>Punainen</h3>
@@ -329,22 +205,13 @@
               <p class="small mono" id="resultGreenRgb" style="margin-top:6px;"></p>
               <div class="result-swatch" id="resultGreenSwatch"></div>
             </div>
-          </div>
-
-          <div class="card line-calibration">
-            <h3>Näyttökalibrointi</h3>
-            <p class="small">Aseta 300 mm mittatikku mustan viivan päälle ja säädä viivaa, kunnes pituus täsmää tarkasti.</p>
-            <div class="line-controls">
-              <button id="lineMinus10" type="button">−10 px</button>
-              <button id="lineMinus1" type="button">−1 px</button>
-              <button id="linePlus1" type="button">+1 px</button>
-              <button id="linePlus10" type="button">+10 px</button>
+            <div class="card">
+              <h3>Mittakalibrointi</h3>
+              <p class="small" id="resultMmLabel" style="margin-top:8px;">300 mm viiva</p>
+              <p class="small mono" id="resultPxPerMm" style="margin-top:6px;"></p>
+              <p class="small mono" id="resultLinePx" style="margin-top:6px;"></p>
             </div>
-            <div class="line-value mono" id="linePxValue">1133.86 px</div>
-            <p class="small mono" id="pxPerMmValue">px/mm: 3.7795</p>
-            <p class="small" id="environmentInfo">Nykyinen ikkuna: -</p>
           </div>
-
           <div class="card" style="margin-top:12px;">
             <h3>Kopioitavat arvot</h3>
             <p class="small mono" id="copyBlock" style="margin-top:8px; white-space:pre-wrap;"></p>
@@ -359,6 +226,9 @@
       <button id="confirmBtn" type="button">Vahvista</button>
       <button id="prevBtn" type="button">Edellinen</button>
       <button id="nextBtn" type="button">Seuraava</button>
+      <button id="measureBtn" type="button">Mittakalibrointi</button>
+      <button id="smallerBtn" type="button" class="hidden">−</button>
+      <button id="largerBtn" type="button" class="hidden">+</button>
       <button id="restartBtn" type="button">Aloita alusta</button>
       <span class="status" id="status"></span>
     </div>
@@ -366,24 +236,16 @@
 
   <script>
     const redOptions = [
-      { hex: '#FF0000' }, { hex: '#F00000' }, { hex: '#E00000' }, { hex: '#D00000' },
-      { hex: '#C00000' }, { hex: '#B00000' }, { hex: '#FF1010' }, { hex: '#FF2000' },
-      { hex: '#FF3000' }, { hex: '#E01010' }, { hex: '#D02020' }, { hex: '#CC1010' }
+      { hex: '#FF0000' },{ hex: '#F00000' },{ hex: '#E00000' },{ hex: '#D00000' },
+      { hex: '#C00000' },{ hex: '#B00000' },{ hex: '#FF1010' },{ hex: '#FF2000' },
+      { hex: '#FF3000' },{ hex: '#E01010' },{ hex: '#D02020' },{ hex: '#CC1010' }
     ];
-
     const greenOptions = [
-      { hex: '#00FF00' }, { hex: '#00F000' }, { hex: '#00E000' }, { hex: '#00D000' },
-      { hex: '#00CC00' }, { hex: '#00C000' }, { hex: '#00B000' }, { hex: '#10FF10' },
-      { hex: '#20E020' }, { hex: '#00AA00' }, { hex: '#008F00' }, { hex: '#007A00' }
+      { hex: '#00FF00' },{ hex: '#00F000' },{ hex: '#00E000' },{ hex: '#00D000' },
+      { hex: '#00CC00' },{ hex: '#00C000' },{ hex: '#00B000' },{ hex: '#10FF10' },
+      { hex: '#20E020' },{ hex: '#00AA00' },{ hex: '#008F00' },{ hex: '#007A00' }
     ];
-
-    const state = {
-      phase: 'red',
-      index: 0,
-      redChoice: null,
-      greenChoice: null,
-      linePx: 1133.86
-    };
+    const state = { phase: 'red', index: 0, redChoice: null, greenChoice: null, linePx: null, mmMode: false };
 
     const optionNumber = document.getElementById('optionNumber');
     const hexValue = document.getElementById('hexValue');
@@ -397,65 +259,41 @@
     const statusEl = document.getElementById('status');
     const redChoiceText = document.getElementById('redChoiceText');
     const greenChoiceText = document.getElementById('greenChoiceText');
+    const mmChoiceText = document.getElementById('mmChoiceText');
     const resultsPanel = document.getElementById('resultsPanel');
     const confirmBtn = document.getElementById('confirmBtn');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const restartBtn = document.getElementById('restartBtn');
-    const linePxValue = document.getElementById('linePxValue');
-    const pxPerMmValue = document.getElementById('pxPerMmValue');
-    const copyBlock = document.getElementById('copyBlock');
-    const environmentInfo = document.getElementById('environmentInfo');
+    const measureBtn = document.getElementById('measureBtn');
+    const smallerBtn = document.getElementById('smallerBtn');
+    const largerBtn = document.getElementById('largerBtn');
+    const verifyLine = document.getElementById('verifyLine');
 
     function hexToRgb(hex) {
       const clean = hex.replace('#', '');
       const bigint = parseInt(clean, 16);
       return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
     }
-
-    function currentOptions() {
-      return state.phase === 'red' ? redOptions : greenOptions;
-    }
-
-    function getCurrentColor() {
-      return currentOptions()[state.index].hex;
-    }
-
+    function currentOptions() { return state.phase === 'red' ? redOptions : greenOptions; }
+    function getCurrentColor() { return currentOptions()[state.index].hex; }
     function setStatus(message = '', type = '') {
       statusEl.textContent = message;
       statusEl.className = `status ${type}`.trim();
     }
-
-    function getPxPerMm() {
-      return Number((state.linePx / 300).toFixed(4));
-    }
-
-    function updateReferenceLine() {
-      document.documentElement.style.setProperty('--line-px', `${state.linePx.toFixed(2)}px`);
-      linePxValue.textContent = `${state.linePx.toFixed(2)} px`;
-      pxPerMmValue.textContent = `px/mm: ${getPxPerMm().toFixed(4)}`;
-      environmentInfo.textContent = `Nykyinen ikkuna: ${window.innerWidth}×${window.innerHeight}, devicePixelRatio ${Number((window.devicePixelRatio || 1).toFixed(4))}`;
-      copyBlock.textContent =
-`redIndex: ${state.redChoice?.index ?? '-'}\nredHex: ${state.redChoice?.hex ?? '-'}\ngreenIndex: ${state.greenChoice?.index ?? '-'}\ngreenHex: ${state.greenChoice?.hex ?? '-'}\npxPerMm: ${getPxPerMm().toFixed(4)}\nlinePx300mm: ${state.linePx.toFixed(2)}`;
-    }
-
     function updateChoiceTexts() {
-      redChoiceText.textContent = state.redChoice
-        ? `Punainen: vaihtoehto ${state.redChoice.index} (${state.redChoice.hex})`
-        : 'Punainen: ei vielä valittu';
-      greenChoiceText.textContent = state.greenChoice
-        ? `Vihreä: vaihtoehto ${state.greenChoice.index} (${state.greenChoice.hex})`
-        : 'Vihreä: ei vielä valittu';
+      redChoiceText.textContent = state.redChoice ? `Punainen: vaihtoehto ${state.redChoice.index} (${state.redChoice.hex})` : 'Punainen: ei vielä valittu';
+      greenChoiceText.textContent = state.greenChoice ? `Vihreä: vaihtoehto ${state.greenChoice.index} (${state.greenChoice.hex})` : 'Vihreä: ei vielä valittu';
+      mmChoiceText.textContent = state.linePx ? `Mittakalibrointi: ${state.linePx.toFixed(1)} px / 300 mm = ${(state.linePx/300).toFixed(4)} px/mm` : 'Mittakalibrointi: ei vielä tehty';
     }
-
     function render() {
       if (state.phase === 'done') {
         optionNumber.textContent = '—';
         hexValue.textContent = 'Valmis';
         rgbValue.textContent = '';
-        currentSwatch.style.background = '#000000';
+        currentSwatch.style.background = '#000';
         phaseTitle.textContent = 'Kalibrointi valmis';
-        phaseInstruction.textContent = 'Alla näkyvät valitsemasi värit ja näyttökalibrointi.';
+        phaseInstruction.textContent = 'Alla näkyvät valitsemasi värit ja mittakalibrointi.';
         shape.classList.add('hidden');
         shapeLabel.classList.add('hidden');
         resultsPanel.classList.remove('hidden');
@@ -463,32 +301,54 @@
         confirmBtn.disabled = true;
         prevBtn.disabled = true;
         nextBtn.disabled = true;
-        updateReferenceLine();
+        measureBtn.disabled = true;
+        smallerBtn.classList.add('hidden');
+        largerBtn.classList.add('hidden');
+        verifyLine.classList.remove('hidden');
+        document.documentElement.style.setProperty('--mm-line-px', `${state.linePx}px`);
+        return;
+      }
+      resultsPanel.classList.add('hidden');
+      shape.classList.remove('hidden');
+      shapeLabel.classList.remove('hidden');
+      verifyLine.classList.toggle('hidden', !state.mmMode);
+      choiceInput.disabled = state.mmMode;
+      confirmBtn.disabled = state.mmMode;
+      prevBtn.disabled = state.mmMode;
+      nextBtn.disabled = state.mmMode;
+      smallerBtn.classList.toggle('hidden', !state.mmMode);
+      largerBtn.classList.toggle('hidden', !state.mmMode);
+
+      if (state.mmMode) {
+        optionNumber.textContent = '300';
+        hexValue.textContent = `${state.linePx.toFixed(1)} px`;
+        rgbValue.textContent = `${(state.linePx/300).toFixed(4)} px/mm`;
+        currentSwatch.style.background = '#000';
+        phaseTitle.textContent = 'Vaihe 3: mittakalibrointi';
+        phaseInstruction.textContent = 'Laita 30 cm mittatikku viivan päälle. Säädä − / + kunnes viiva on täsmälleen 300 mm.';
+        shape.className = 'shape hidden';
+        shape.innerHTML = '';
+        shapeLabel.classList.add('hidden');
+        document.documentElement.style.setProperty('--mm-line-px', `${state.linePx}px`);
+        updateChoiceTexts();
         return;
       }
 
       const hex = getCurrentColor();
       const rgb = hexToRgb(hex);
-      resultsPanel.classList.add('hidden');
-      shape.classList.remove('hidden');
-      shapeLabel.classList.remove('hidden');
-      choiceInput.disabled = false;
-      confirmBtn.disabled = false;
-      prevBtn.disabled = false;
-      nextBtn.disabled = false;
-
       optionNumber.textContent = String(state.index + 1);
       hexValue.textContent = hex;
       rgbValue.textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
       currentSwatch.style.background = hex;
       document.documentElement.style.setProperty('--shape-color', hex);
+      shapeLabel.classList.remove('hidden');
 
       if (state.phase === 'red') {
         phaseTitle.textContent = 'Vaihe 1: punaisen kalibrointi';
         phaseInstruction.textContent = 'Katso vihreän linssin läpi. Vaihda nuolinäppäimillä vaihtoehtoja ja etsi punainen sävy, joka häviää parhaiten.';
         shape.className = 'shape cross';
-        shapeLabel.textContent = 'Punainen risti';
         shape.innerHTML = '';
+        shapeLabel.textContent = 'Punainen risti';
       } else {
         phaseTitle.textContent = 'Vaihe 2: vihreän kalibrointi';
         phaseInstruction.textContent = 'Katso punaisen linssin läpi. Vaihda nuolinäppäimillä vaihtoehtoja ja etsi vihreä sävy, joka häviää parhaiten.';
@@ -496,21 +356,38 @@
         shape.innerHTML = '<div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>';
         shapeLabel.textContent = 'Vihreät ympyrät';
       }
-
       choiceInput.placeholder = `1–${currentOptions().length}`;
       updateChoiceTexts();
     }
-
     function move(step) {
-      if (state.phase === 'done') return;
+      if (state.phase === 'done' || state.mmMode) return;
       const options = currentOptions();
       state.index = (state.index + step + options.length) % options.length;
       setStatus('');
       render();
     }
-
+    function openMeasureMode() {
+      if (!state.redChoice || !state.greenChoice) {
+        setStatus('Tallenna ensin punainen ja vihreä vaihtoehto.', 'error');
+        return;
+      }
+      state.mmMode = true;
+      if (!state.linePx) state.linePx = 300;
+      setStatus('Säädä 300 mm viiva oikeaan pituuteen.', 'success');
+      render();
+    }
+    function adjustLine(delta) {
+      if (!state.mmMode) return;
+      state.linePx = Math.max(50, state.linePx + delta);
+      render();
+    }
     function finish() {
+      if (!state.linePx) {
+        setStatus('Tee ensin mittakalibrointi.', 'error');
+        return;
+      }
       state.phase = 'done';
+      state.mmMode = false;
       const rr = hexToRgb(state.redChoice.hex);
       const gg = hexToRgb(state.greenChoice.hex);
       document.getElementById('resultRedIndex').textContent = `Vaihtoehto ${state.redChoice.index}`;
@@ -521,23 +398,24 @@
       document.getElementById('resultGreenHex').textContent = `Hex: ${state.greenChoice.hex}`;
       document.getElementById('resultGreenRgb').textContent = `RGB: (${gg.r}, ${gg.g}, ${gg.b})`;
       document.getElementById('resultGreenSwatch').style.background = state.greenChoice.hex;
+      document.getElementById('resultPxPerMm').textContent = `px/mm: ${(state.linePx/300).toFixed(4)}`;
+      document.getElementById('resultLinePx').textContent = `300 mm = ${state.linePx.toFixed(1)} px`;
+      document.getElementById('copyBlock').textContent =
+`redIndex: ${state.redChoice.index}\nredHex: ${state.redChoice.hex}\ngreenIndex: ${state.greenChoice.index}\ngreenHex: ${state.greenChoice.hex}\npxPerMm: ${(state.linePx/300).toFixed(6)}\nline300mmPx: ${state.linePx.toFixed(2)}`;
       setStatus('Kalibrointi valmis.', 'success');
       render();
     }
-
     function confirmSelection() {
       if (state.phase === 'done') return;
+      if (state.mmMode) { finish(); return; }
       const raw = choiceInput.value.trim();
       const n = Number(raw);
       const options = currentOptions();
-
       if (!Number.isInteger(n) || n < 1 || n > options.length) {
         setStatus(`Syötä numero väliltä 1–${options.length}.`, 'error');
         return;
       }
-
       const chosen = { index: n, hex: options[n - 1].hex };
-
       if (state.phase === 'red') {
         state.redChoice = chosen;
         state.phase = 'green';
@@ -547,58 +425,30 @@
       } else {
         state.greenChoice = chosen;
         choiceInput.value = '';
-        finish();
-        return;
+        setStatus(`Vihreä tallennettu: vaihtoehto ${chosen.index} ${chosen.hex}`, 'success');
       }
-
       render();
     }
-
     function restart() {
-      state.phase = 'red';
-      state.index = 0;
-      state.redChoice = null;
-      state.greenChoice = null;
-      choiceInput.value = '';
-      shape.innerHTML = '';
-      setStatus('Kalibrointi nollattu.', 'success');
-      render();
+      state.phase = 'red'; state.index = 0; state.redChoice = null; state.greenChoice = null; state.linePx = null; state.mmMode = false;
+      choiceInput.value = ''; shape.innerHTML = ''; setStatus('Kalibrointi nollattu.', 'success'); render();
     }
-
-    function adjustLine(delta) {
-      state.linePx = Math.max(100, Number((state.linePx + delta).toFixed(2)));
-      updateReferenceLine();
-    }
-
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-        event.preventDefault();
-        move(-1);
-      } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
-        event.preventDefault();
-        move(1);
-      } else if (event.key === 'Enter') {
-        if (document.activeElement === choiceInput || document.activeElement === document.body) {
-          event.preventDefault();
-          confirmSelection();
-        }
-      } else if (event.key.toLowerCase() === 'r') {
-        event.preventDefault();
-        restart();
-      }
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { event.preventDefault(); state.mmMode ? adjustLine(-1) : move(-1); }
+      else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { event.preventDefault(); state.mmMode ? adjustLine(1) : move(1); }
+      else if (event.key === 'Enter') { event.preventDefault(); confirmSelection(); }
+      else if (event.key.toLowerCase() === 'r') { event.preventDefault(); restart(); }
+      else if (state.mmMode && event.key === 'PageDown') { event.preventDefault(); adjustLine(-10); }
+      else if (state.mmMode && event.key === 'PageUp') { event.preventDefault(); adjustLine(10); }
     });
-
-    document.getElementById('lineMinus10').addEventListener('click', () => adjustLine(-10));
-    document.getElementById('lineMinus1').addEventListener('click', () => adjustLine(-1));
-    document.getElementById('linePlus1').addEventListener('click', () => adjustLine(1));
-    document.getElementById('linePlus10').addEventListener('click', () => adjustLine(10));
     confirmBtn.addEventListener('click', confirmSelection);
     prevBtn.addEventListener('click', () => move(-1));
     nextBtn.addEventListener('click', () => move(1));
     restartBtn.addEventListener('click', restart);
-    window.addEventListener('resize', updateReferenceLine);
+    measureBtn.addEventListener('click', openMeasureMode);
+    smallerBtn.addEventListener('click', () => adjustLine(-1));
+    largerBtn.addEventListener('click', () => adjustLine(1));
     render();
-    updateReferenceLine();
   </script>
 </body>
 </html>
