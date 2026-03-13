@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Landolt C – näöntarkkuustaulu</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #fff;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    /* --- Calibration screen --- */
+    .calibration-screen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 40px 20px;
+      background: #f5f5f5;
+    }
+    .cal-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 16px;
+      padding: 36px 40px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .cal-card h1 { font-size: 24px; margin-bottom: 8px; }
+    .cal-card p { font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 20px; }
+    .field { margin-bottom: 18px; }
+    .field label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    .field input {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+    .field input:focus { outline: 2px solid #2a6ef5; border-color: #2a6ef5; }
+    .field .hint { font-size: 12px; color: #999; margin-top: 4px; }
+    .cal-btn {
+      display: inline-block;
+      padding: 12px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #2a6ef5;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .cal-btn:hover { background: #1b5ad4; }
+    .cal-error { color: #d00; font-size: 13px; margin-top: 8px; min-height: 20px; }
+
+    /* --- Chart screen --- */
+    .chart-screen { display: none; flex-direction: column; min-height: 100vh; }
+    .chart-screen.active { display: flex; }
+    .chart-header {
+      padding: 12px 24px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: #fafafa;
+    }
+    .chart-header .info { font-size: 13px; color: #666; }
+    .chart-header .info b { color: #222; }
+    .header-buttons { display: flex; gap: 8px; }
+    .header-btn {
+      padding: 8px 16px;
+      font-size: 13px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      color: #333;
+    }
+    .header-btn:hover { background: #eee; }
+
+    .chart-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      gap: 0;
+      background: #fff;
+    }
+    .chart-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 4px;
+    }
+    .chart-row .visus-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      width: 48px;
+      text-align: right;
+      padding-right: 12px;
+      flex-shrink: 0;
+    }
+    .chart-row .optotypes {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .optotype-cell {
+      display: grid;
+      place-items: center;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- Calibration -->
+  <div class="calibration-screen" id="calScreen">
+    <div class="cal-card">
+      <h1>Näöntarkkuustaulu</h1>
+      <p>Syötä mittakalibroinnista saatu px/mm-arvo sekä tutkimusetäisyys. Ohjelma laskee Landolt C -optotyyppien oikean koon visusarvoille 1.0, 0.8, 0.63, 0.5 ja 0.4.</p>
+
+      <div class="field">
+        <label for="pxPerMmInput">px/mm (kalibrointiarvo)</label>
+        <input id="pxPerMmInput" type="number" step="any" min="0.1" placeholder="esim. 3.7795" />
+        <div class="hint">Kalibrointiohjelman antama arvo, esim. 3.7795</div>
+      </div>
+
+      <div class="field">
+        <label for="distanceInput">Tutkimusetäisyys (metriä)</label>
+        <input id="distanceInput" type="number" step="any" min="0.1" placeholder="esim. 4" />
+        <div class="hint">Tyypillisesti 4 m tai 6 m</div>
+      </div>
+
+      <button class="cal-btn" id="startBtn">Näytä taulu</button>
+      <div class="cal-error" id="calError"></div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-screen" id="chartScreen">
+    <div class="chart-header">
+      <div class="info">
+        <span id="infoText"></span>
+      </div>
+      <div class="header-buttons">
+        <button class="header-btn" id="shuffleBtn">Sekoita (uudet suunnat)</button>
+        <button class="header-btn" id="recalBtn">Kalibroi uudelleen</button>
+      </div>
+    </div>
+    <div class="chart-body" id="chartBody"></div>
+  </div>
+
+  <script>
+    // --- Configuration ---
+    const VISUS_VALUES = [0.4, 0.5, 0.63, 0.8, 1.0]; // top to bottom (largest first)
+    const OPTOTYPES_PER_ROW = 5;
+    const DIRECTIONS = ['right', 'up', 'left', 'down']; // rotation angles
+    const ROTATIONS = { right: 0, down: 90, left: 180, up: 270 };
+
+    // Landolt C optotype diameter in mm for given visus and distance
+    // Standard: visus 1.0 → gap = 1 arcmin, diameter = 5 arcmin
+    // diameter_mm = 5 * tan(1') * distance_mm / visus
+    // tan(1 arcmin) = tan(π/10800) ≈ 0.00029089
+    const TAN_1_ARCMIN = Math.tan(Math.PI / 10800);
+
+    function optotypeDiameterMm(visus, distanceMm) {
+      return 5 * TAN_1_ARCMIN * distanceMm / visus;
+    }
+
+    // Generate inline SVG for a Landolt C with unique mask id
+    function createLandoltSVG(direction, sizePx, uid) {
+      const rot = ROTATIONS[direction];
+      const maskId = `m${uid}`;
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      svg.setAttribute('width', sizePx);
+      svg.setAttribute('height', sizePx);
+      svg.setAttribute('viewBox', '0 0 50 50');
+      svg.innerHTML = `
+        <defs>
+          <mask id="${maskId}">
+            <rect x="0" y="0" width="50" height="50" fill="white"/>
+            <circle cx="25" cy="25" r="15" fill="black"/>
+            <rect x="25" y="20" width="25" height="10" fill="black"/>
+          </mask>
+        </defs>
+        <g transform="rotate(${rot} 25 25)">
+          <circle cx="25" cy="25" r="25" fill="black" mask="url(#${maskId})"/>
+        </g>`;
+      return svg;
+    }
+
+    function randomDirection() {
+      return DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
+    }
+
+    // --- State ---
+    let pxPerMm = 0;
+    let distanceM = 0;
+    let uidCounter = 0;
+
+    // --- DOM ---
+    const calScreen = document.getElementById('calScreen');
+    const chartScreen = document.getElementById('chartScreen');
+    const pxPerMmInput = document.getElementById('pxPerMmInput');
+    const distanceInput = document.getElementById('distanceInput');
+    const startBtn = document.getElementById('startBtn');
+    const calError = document.getElementById('calError');
+    const chartBody = document.getElementById('chartBody');
+    const infoText = document.getElementById('infoText');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const recalBtn = document.getElementById('recalBtn');
+
+    function showError(msg) { calError.textContent = msg; }
+
+    function buildChart() {
+      chartBody.innerHTML = '';
+      uidCounter = 0;
+      const distanceMm = distanceM * 1000;
+
+      // Build rows from largest (lowest visus) to smallest (highest visus)
+      for (const visus of VISUS_VALUES) {
+        const diamMm = optotypeDiameterMm(visus, distanceMm);
+        const diamPx = diamMm * pxPerMm;
+        // Spacing between optotypes: ~0.5× diameter, min 4px
+        const gap = Math.max(4, diamPx * 0.5);
+
+        const row = document.createElement('div');
+        row.className = 'chart-row';
+
+        const label = document.createElement('div');
+        label.className = 'visus-label';
+        label.textContent = visus.toFixed(2).replace(/0$/, '');
+        row.appendChild(label);
+
+        const optotypes = document.createElement('div');
+        optotypes.className = 'optotypes';
+        optotypes.style.gap = gap + 'px';
+
+        for (let i = 0; i < OPTOTYPES_PER_ROW; i++) {
+          const cell = document.createElement('div');
+          cell.className = 'optotype-cell';
+          cell.style.width = diamPx + 'px';
+          cell.style.height = diamPx + 'px';
+          const svg = createLandoltSVG(randomDirection(), diamPx, uidCounter++);
+          cell.appendChild(svg);
+          optotypes.appendChild(cell);
+        }
+
+        row.appendChild(optotypes);
+        chartBody.appendChild(row);
+      }
+
+      // Info text
+      const exampleDiam = optotypeDiameterMm(1.0, distanceMm);
+      infoText.innerHTML = `px/mm: <b>${pxPerMm.toFixed(4)}</b> &nbsp;|&nbsp; Etäisyys: <b>${distanceM} m</b> &nbsp;|&nbsp; Visus 1.0 Ø: <b>${exampleDiam.toFixed(2)} mm</b> (${(exampleDiam * pxPerMm).toFixed(1)} px)`;
+    }
+
+    function startChart() {
+      const px = parseFloat(pxPerMmInput.value);
+      const dist = parseFloat(distanceInput.value);
+      if (!px || px <= 0) { showError('Syötä kelvollinen px/mm-arvo.'); return; }
+      if (!dist || dist <= 0) { showError('Syötä kelvollinen tutkimusetäisyys.'); return; }
+      pxPerMm = px;
+      distanceM = dist;
+      showError('');
+      calScreen.style.display = 'none';
+      chartScreen.classList.add('active');
+      buildChart();
+    }
+
+    function recalibrate() {
+      chartScreen.classList.remove('active');
+      calScreen.style.display = '';
+    }
+
+    startBtn.addEventListener('click', startChart);
+    // Enter in inputs
+    pxPerMmInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') startChart(); });
+    distanceInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') startChart(); });
+    shuffleBtn.addEventListener('click', buildChart);
+    recalBtn.addEventListener('click', recalibrate);
+  </script>
+</body>
+</html>
