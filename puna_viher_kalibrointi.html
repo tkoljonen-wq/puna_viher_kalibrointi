@@ -14,7 +14,7 @@
       --ok: #6bff8a;
       --danger: #ff6b6b;
       --shape-color: #ff0000;
-      --mm-line-px: 200px;
+      --mm-line-px: 300px;
     }
     * { box-sizing: border-box; }
     body {
@@ -79,9 +79,8 @@
     .verify-line {
       position: absolute;
       top: 18px;
-      right: 20px;
-      left: auto;
-      transform: none;
+      left: 50%;
+      transform: translateX(-50%);
       width: var(--mm-line-px);
       height: 4px;
       background: #000;
@@ -140,14 +139,14 @@
   <aside class="sidebar">
     <div>
       <h1>Puna–viherkalibrointi</h1>
-      <p class="small" style="margin-top:8px;">Kalibroi värit ja/tai mitta tarpeen mukaan. Mittakalibroinnissa käytetään 200 mm viivaa.</p>
+      <p class="small" style="margin-top:8px;">Kalibroi ensin punainen ja vihreä. Tee sen jälkeen mittakalibrointi 300 mm viivalla.</p>
     </div>
 
     <div class="card">
       <h2>Vaiheet</h2>
       <p class="small" style="margin-top:8px;">1. Katso vihreän linssin läpi ja valitse punainen sävy 1–12.</p>
       <p class="small" style="margin-top:6px;">2. Katso punaisen linssin läpi ja valitse vihreä sävy 1–12.</p>
-      <p class="small" style="margin-top:6px;">3. Paina <b>Mittakalibrointi</b> ja säädä viiva tasan 200 mm pitkäksi.</p>
+      <p class="small" style="margin-top:6px;">3. Paina <b>Mittakalibrointi</b> ja säädä viiva tasan 300 mm pitkäksi.</p>
     </div>
 
     <div class="card">
@@ -208,7 +207,7 @@
             </div>
             <div class="card">
               <h3>Mittakalibrointi</h3>
-              <p class="small" id="resultMmLabel" style="margin-top:8px;">200 mm viiva</p>
+              <p class="small" id="resultMmLabel" style="margin-top:8px;">300 mm viiva</p>
               <p class="small mono" id="resultPxPerMm" style="margin-top:6px;"></p>
               <p class="small mono" id="resultLinePx" style="margin-top:6px;"></p>
             </div>
@@ -285,7 +284,7 @@
     function updateChoiceTexts() {
       redChoiceText.textContent = state.redChoice ? `Punainen: vaihtoehto ${state.redChoice.index} (${state.redChoice.hex})` : 'Punainen: ei vielä valittu';
       greenChoiceText.textContent = state.greenChoice ? `Vihreä: vaihtoehto ${state.greenChoice.index} (${state.greenChoice.hex})` : 'Vihreä: ei vielä valittu';
-      mmChoiceText.textContent = state.linePx ? `Mittakalibrointi: ${state.linePx.toFixed(1)} px / 200 mm = ${(state.linePx/200).toFixed(4)} px/mm` : 'Mittakalibrointi: ei vielä tehty';
+      mmChoiceText.textContent = state.linePx ? `Mittakalibrointi: ${state.linePx.toFixed(1)} px / 300 mm = ${(state.linePx/300).toFixed(4)} px/mm` : 'Mittakalibrointi: ei vielä tehty';
     }
     function render() {
       if (state.phase === 'done') {
@@ -321,12 +320,12 @@
       largerBtn.classList.toggle('hidden', !state.mmMode);
 
       if (state.mmMode) {
-        optionNumber.textContent = '200';
+        optionNumber.textContent = '300';
         hexValue.textContent = `${state.linePx.toFixed(1)} px`;
-        rgbValue.textContent = `${(state.linePx/200).toFixed(4)} px/mm`;
+        rgbValue.textContent = `${(state.linePx/300).toFixed(4)} px/mm`;
         currentSwatch.style.background = '#000';
         phaseTitle.textContent = 'Vaihe 3: mittakalibrointi';
-        phaseInstruction.textContent = 'Laita 20 cm mittatikku viivan päälle. Säädä − / + kunnes viiva on täsmälleen 200 mm.';
+        phaseInstruction.textContent = 'Laita 30 cm mittatikku viivan päälle. Säädä − / + kunnes viiva on täsmälleen 300 mm.';
         shape.className = 'shape hidden';
         shape.innerHTML = '';
         shapeLabel.classList.add('hidden');
@@ -373,8 +372,8 @@
         return;
       }
       state.mmMode = true;
-      if (!state.linePx) state.linePx = 200;
-      setStatus('Säädä 200 mm viiva oikeaan pituuteen.', 'success');
+      if (!state.linePx) state.linePx = 300;
+      setStatus('Säädä 300 mm viiva oikeaan pituuteen.', 'success');
       render();
     }
     function adjustLine(delta) {
@@ -399,10 +398,10 @@
       document.getElementById('resultGreenHex').textContent = `Hex: ${state.greenChoice.hex}`;
       document.getElementById('resultGreenRgb').textContent = `RGB: (${gg.r}, ${gg.g}, ${gg.b})`;
       document.getElementById('resultGreenSwatch').style.background = state.greenChoice.hex;
-      document.getElementById('resultPxPerMm').textContent = `px/mm: ${(state.linePx/200).toFixed(4)}`;
-      document.getElementById('resultLinePx').textContent = `200 mm = ${state.linePx.toFixed(1)} px`;
+      document.getElementById('resultPxPerMm').textContent = `px/mm: ${(state.linePx/300).toFixed(4)}`;
+      document.getElementById('resultLinePx').textContent = `300 mm = ${state.linePx.toFixed(1)} px`;
       document.getElementById('copyBlock').textContent =
-`redIndex: ${state.redChoice.index}\nredHex: ${state.redChoice.hex}\ngreenIndex: ${state.greenChoice.index}\ngreenHex: ${state.greenChoice.hex}\npxPerMm: ${(state.linePx/200).toFixed(6)}\nline200mmPx: ${state.linePx.toFixed(2)}`;
+`redIndex: ${state.redChoice.index}\nredHex: ${state.redChoice.hex}\ngreenIndex: ${state.greenChoice.index}\ngreenHex: ${state.greenChoice.hex}\npxPerMm: ${(state.linePx/300).toFixed(6)}\nline300mmPx: ${state.linePx.toFixed(2)}`;
       setStatus('Kalibrointi valmis.', 'success');
       render();
     }
