@@ -15,253 +15,45 @@
       --target-bg: #efefef;
       --bar-red: #ff0000;
       --bar-green: #00ff00;
-      --ref-line-px: 300px;
+      --line-300mm-px: 300px;
     }
-
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    .wrap {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 14px 20px 20px;
-    }
-
-    .top-reference {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 12px;
-      min-height: 20px;
-    }
-
-    .reference-line {
-      width: var(--ref-line-px);
-      height: 4px;
-      background: #000;
-      border-radius: 999px;
-    }
-
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 18px;
-      padding: 12px;
-      background: var(--panel);
-      border: 1px solid #c8c8c8;
-      border-radius: 10px;
-    }
-
-    button {
-      border: 1px solid #333;
-      background: white;
-      color: #111;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button.active {
-      background: #111;
-      color: white;
-    }
-
-    .status {
-      margin-left: auto;
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.45;
-      max-width: 100%;
-    }
-
-    .warning-banner {
-      margin-bottom: 12px;
-      padding: 10px 12px;
-      border: 1px solid #d3a400;
-      background: #fff7cc;
-      border-radius: 10px;
-      font-size: 14px;
-      line-height: 1.45;
-    }
-
-    .warning-banner.hidden,
-    .inline-warning.hidden,
-    .environment-warning.hidden,
-    .help-note.hidden {
-      display: none;
-    }
-
-    .stage {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 72vh;
-    }
-
-    .test-area {
-      position: relative;
-      background: var(--test-bg);
-      border: 2px solid var(--border);
-      width: min(92vw, 980px);
-      aspect-ratio: 1.55 / 1;
-      overflow: hidden;
-    }
-
-    .target-box {
-      position: absolute;
-      background: var(--target-bg);
-      border: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 30px;
-    }
-
-    .row-target {
-      width: 56%;
-      height: 15%;
-      left: 22%;
-      top: 42.5%;
-      flex-direction: row;
-    }
-
-    .col-target {
-      width: 20%;
-      height: 62%;
-      left: 40%;
-      top: 19%;
-      flex-direction: column;
-      gap: 22px;
-    }
-
-    .ring {
-      position: relative;
-      width: 64px;
-      height: 64px;
-      border: 14px solid #000;
-      border-radius: 50%;
-      background: transparent;
-      flex: 0 0 auto;
-    }
-
-    .cross {
-      position: relative;
-      width: 72px;
-      height: 72px;
-      flex: 0 0 auto;
-    }
-
-    .cross::before,
-    .cross::after {
-      content: "";
-      position: absolute;
-      background: #000;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .cross::before {
-      width: 18px;
-      height: 72px;
-    }
-
-    .cross::after {
-      width: 72px;
-      height: 18px;
-    }
-
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .verify-line { width: var(--line-300mm-px); height: 4px; background: #000; margin: 0 auto 14px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px; padding: 12px; background: var(--panel); border: 1px solid #c8c8c8; border-radius: 10px; }
+    button { border: 1px solid #333; background: white; color: #111; padding: 10px 14px; border-radius: 8px; font-size: 16px; cursor: pointer; }
+    button.active { background: #111; color: white; }
+    .status { margin-left: auto; font-size: 14px; color: var(--muted); max-width: 430px; }
+    .warning { margin-bottom: 10px; font-size: 14px; color: #8a5a00; background: #fff4d6; border: 1px solid #f1d58a; border-radius: 10px; padding: 10px 12px; }
+    .stage { display: flex; justify-content: center; align-items: flex-start; min-height: 72vh; }
+    .test-area { position: relative; background: var(--test-bg); border: 2px solid var(--border); width: min(92vw, 980px); aspect-ratio: 1.55 / 1; overflow: hidden; }
+    .target-box { position: absolute; background: var(--target-bg); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 30px; }
+    .row-target { width: 56%; height: 15%; left: 22%; top: 42.5%; flex-direction: row; }
+    .col-target { width: 20%; height: 62%; left: 40%; top: 19%; flex-direction: column; gap: 22px; }
+    .ring { position: relative; width: 64px; height: 64px; border: 14px solid #000; border-radius: 50%; background: transparent; flex: 0 0 auto; }
+    .cross { position: relative; width: 72px; height: 72px; flex: 0 0 auto; }
+    .cross::before, .cross::after { content: ""; position: absolute; background: #000; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+    .cross::before { width: 18px; height: 72px; }
+    .cross::after { width: 72px; height: 18px; }
     .bar { position: absolute; }
-
-    .h-green, .h-red {
-      width: 6%;
-      height: 28%;
-      left: 47%;
-    }
-
+    .h-green, .h-red { width: 6%; height: 28%; left: 47%; }
     .h-green { top: 13%; background: var(--bar-green); }
     .h-red { top: 59%; background: var(--bar-red); }
-
-    .v-green, .v-red {
-      width: 32%;
-      height: 7.5%;
-      top: 46.25%;
-    }
-
+    .v-green, .v-red { width: 32%; height: 7.5%; top: 46.25%; }
     .v-green { left: 5%; background: var(--bar-green); }
     .v-red { left: 63%; background: var(--bar-red); }
-
-    dialog {
-      border: 1px solid #444;
-      border-radius: 12px;
-      padding: 0;
-      width: min(92vw, 520px);
-    }
-
-    dialog::backdrop { background: rgba(0, 0, 0, 0.4); }
-
+    dialog { border: 1px solid #444; border-radius: 12px; padding: 0; width: min(92vw, 520px); }
+    dialog::backdrop { background: rgba(0,0,0,.4); }
     .dialog-inner { padding: 18px; }
     .dialog-inner h2 { margin: 0 0 14px; font-size: 22px; }
-
     .field { margin-bottom: 14px; }
-    .field label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    .field input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #777;
-      border-radius: 8px;
-    }
-
-    .help, .help-note, .inline-warning, .environment-warning {
-      font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 14px;
-      line-height: 1.45;
-    }
-
-    .inline-warning, .environment-warning {
-      color: #8a6500;
-    }
-
-    .error {
-      color: #b00020;
-      min-height: 1.2em;
-      margin-bottom: 10px;
-      font-size: 14px;
-    }
-
-    .dialog-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 8px;
-    }
-
-    .legend {
-      margin-top: 10px;
-      font-size: 14px;
-      color: var(--muted);
-      background: var(--panel);
-      border: 1px solid #c8c8c8;
-      border-radius: 10px;
-      padding: 10px 12px;
-      line-height: 1.45;
-    }
-
+    .field label { display: block; font-weight: 600; margin-bottom: 6px; }
+    .field input { width: 100%; padding: 10px; font-size: 16px; border: 1px solid #777; border-radius: 8px; }
+    .help { font-size: 14px; color: var(--muted); margin-bottom: 14px; line-height: 1.4; }
+    .error { color: #b00020; min-height: 1.2em; margin-bottom: 10px; font-size: 14px; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+    .legend { margin-top: 10px; font-size: 14px; color: var(--muted); background: var(--panel); border: 1px solid #c8c8c8; border-radius: 10px; padding: 10px 12px; line-height: 1.45; }
     @media (max-width: 700px) {
       .ring { width: 44px; height: 44px; border-width: 10px; }
       .cross { width: 50px; height: 50px; }
@@ -270,20 +62,14 @@
       .row-target { gap: 16px; }
       .col-target { gap: 14px; }
       .toolbar { padding: 10px; }
-      .status { width: 100%; margin-left: 0; }
+      .status { width: 100%; margin-left: 0; max-width: none; }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="top-reference" aria-hidden="true">
-      <div class="reference-line" id="referenceLine"></div>
-    </div>
-
-    <div class="warning-banner" id="zoomBanner">
-      Selainzoomin pitää olla 100 %. Tarkista kalibrointi mittatikulla ennen testiä ja kalibroi uudelleen, jos selainikkuna, zoomaus, näytön resoluutio tai käyttöjärjestelmän skaalaus on muuttunut.
-    </div>
-
+    <div class="verify-line" id="verifyLine"></div>
+    <div class="warning" id="warningBox">Varmista että selainzoomi on 100 %. Tarkista 300 mm viiva mittatikulla ennen testiä.</div>
     <div class="toolbar">
       <button id="showHorizontal" class="active" type="button">Vaakatesti</button>
       <button id="showVertical" type="button">Pystytesti</button>
@@ -291,279 +77,106 @@
       <button id="resetDefault" type="button">Palauta oletus</button>
       <div class="status" id="statusText"></div>
     </div>
-
     <div class="stage">
       <div class="test-area" id="testArea">
         <div id="horizontalTest">
           <div class="bar h-green"></div>
-          <div class="target-box row-target">
-            <div class="ring"></div>
-            <div class="cross"></div>
-            <div class="ring"></div>
-          </div>
+          <div class="target-box row-target"><div class="ring"></div><div class="cross"></div><div class="ring"></div></div>
           <div class="bar h-red"></div>
         </div>
-
         <div id="verticalTest" hidden>
           <div class="bar v-green"></div>
-          <div class="target-box col-target">
-            <div class="ring"></div>
-            <div class="cross"></div>
-            <div class="ring"></div>
-          </div>
+          <div class="target-box col-target"><div class="ring"></div><div class="cross"></div><div class="ring"></div></div>
           <div class="bar v-red"></div>
         </div>
       </div>
     </div>
-
-    <div class="legend">
-      Syötä kalibroinnissa punaiselle ja vihreälle numerot 1–12 sekä näyttökalibroinnin arvo <strong>px/mm</strong>.
-      Musta viiva yläreunassa on aina 300 mm pitkä viimeksi tallennetun näyttökalibroinnin perusteella, joten sen voi tarkistaa mittatikulla ennen testiä.
-    </div>
+    <div class="legend">Syötä punaisen ja vihreän kalibrointinumerot 1–12 sekä mittakalibroinnin arvo <span style="font-family:Consolas,monospace;">px/mm</span>. Ohjelma tallentaa myös selainympäristön tiedot ja varoittaa, jos ne muuttuvat.</div>
   </div>
 
   <dialog id="calibrationDialog">
     <form method="dialog" class="dialog-inner" id="calibrationForm">
       <h2>Kalibroi</h2>
-      <div class="help">
-        Syötä paras kalibrointinumero punaiselle ja vihreälle sekä näyttökalibroinnin arvo. Selainzoomin pitää olla 100 %.
-      </div>
-      <div class="inline-warning" id="dialogZoomWarning"></div>
-      <div class="environment-warning hidden" id="dialogEnvironmentWarning"></div>
-
-      <div class="field">
-        <label for="redIndex">Punainen (1–12)</label>
-        <input id="redIndex" name="redIndex" type="number" min="1" max="12" step="1" required />
-      </div>
-
-      <div class="field">
-        <label for="greenIndex">Vihreä (1–12)</label>
-        <input id="greenIndex" name="greenIndex" type="number" min="1" max="12" step="1" required />
-      </div>
-
-      <div class="field">
-        <label for="pxPerMm">Näyttökalibrointi (px/mm)</label>
-        <input id="pxPerMm" name="pxPerMm" type="number" min="0.1" max="100" step="0.0001" required />
-      </div>
-
-      <div class="help-note hidden" id="savedEnvironmentInfo"></div>
+      <div class="help">Anna punainen 1–12, vihreä 1–12 ja mittakalibroinnista saatu px/mm-arvo. Selainzoomin tulee olla 100 %.</div>
+      <div class="field"><label for="redIndex">Punainen (1–12)</label><input id="redIndex" name="redIndex" type="number" min="1" max="12" step="1" required /></div>
+      <div class="field"><label for="greenIndex">Vihreä (1–12)</label><input id="greenIndex" name="greenIndex" type="number" min="1" max="12" step="1" required /></div>
+      <div class="field"><label for="pxPerMm">Näyttökalibrointi (px/mm)</label><input id="pxPerMm" name="pxPerMm" type="number" min="0.01" step="0.0001" required /></div>
       <div class="error" id="errorText"></div>
-
-      <div class="dialog-actions">
-        <button type="button" id="cancelCalibration">Peruuta</button>
-        <button type="submit">Tallenna</button>
-      </div>
+      <div class="dialog-actions"><button type="button" id="cancelCalibration">Peruuta</button><button type="submit">Tallenna</button></div>
     </form>
   </dialog>
 
   <script>
-    const RED_PRESETS = {
-      1: '#FF0000', 2: '#F00000', 3: '#E00000', 4: '#D00000', 5: '#C00000', 6: '#B00000',
-      7: '#FF1010', 8: '#FF2000', 9: '#FF3000', 10: '#E01010', 11: '#D02020', 12: '#CC1010'
-    };
-
-    const GREEN_PRESETS = {
-      1: '#00FF00', 2: '#00F000', 3: '#00E000', 4: '#00D000', 5: '#00CC00', 6: '#00C000',
-      7: '#00B000', 8: '#10FF10', 9: '#20E020', 10: '#00AA00', 11: '#008F00', 12: '#007A00'
-    };
-
+    const RED_PRESETS = {1:'#FF0000',2:'#F00000',3:'#E00000',4:'#D00000',5:'#C00000',6:'#B00000',7:'#FF1010',8:'#FF2000',9:'#FF3000',10:'#E01010',11:'#D02020',12:'#CC1010'};
+    const GREEN_PRESETS = {1:'#00FF00',2:'#00F000',3:'#00E000',4:'#00D000',5:'#00CC00',6:'#00C000',7:'#00B000',8:'#10FF10',9:'#20E020',10:'#00AA00',11:'#008F00',12:'#007A00'};
     const STORAGE_KEY = 'fd_test_calibration_v2';
-    const DEFAULTS = { redIndex: 1, greenIndex: 1, pxPerMm: 3.7795 };
-
-    const horizontalBtn = document.getElementById('showHorizontal');
-    const verticalBtn = document.getElementById('showVertical');
-    const openCalibrationBtn = document.getElementById('openCalibration');
-    const resetDefaultBtn = document.getElementById('resetDefault');
-    const horizontalTest = document.getElementById('horizontalTest');
-    const verticalTest = document.getElementById('verticalTest');
-    const statusText = document.getElementById('statusText');
-    const calibrationDialog = document.getElementById('calibrationDialog');
-    const calibrationForm = document.getElementById('calibrationForm');
-    const redIndexInput = document.getElementById('redIndex');
-    const greenIndexInput = document.getElementById('greenIndex');
-    const pxPerMmInput = document.getElementById('pxPerMm');
-    const errorText = document.getElementById('errorText');
-    const cancelCalibrationBtn = document.getElementById('cancelCalibration');
-    const zoomBanner = document.getElementById('zoomBanner');
-    const dialogZoomWarning = document.getElementById('dialogZoomWarning');
-    const dialogEnvironmentWarning = document.getElementById('dialogEnvironmentWarning');
-    const savedEnvironmentInfo = document.getElementById('savedEnvironmentInfo');
-
-    function clampIndex(value) {
-      const n = Number(value);
-      if (!Number.isInteger(n) || n < 1 || n > 12) return 1;
-      return n;
-    }
-
-    function normalizePxPerMm(value) {
-      const n = Number(value);
-      if (!Number.isFinite(n) || n <= 0) return DEFAULTS.pxPerMm;
-      return Number(n.toFixed(4));
-    }
-
-    function getEnvironmentSnapshot() {
+    const $ = id => document.getElementById(id);
+    function clampIndex(v){ const n=Number(v); return Number.isInteger(n)&&n>=1&&n<=12?n:1; }
+    function captureEnvironment(){
       return {
         innerWidth: window.innerWidth,
         innerHeight: window.innerHeight,
         outerWidth: window.outerWidth,
         outerHeight: window.outerHeight,
-        devicePixelRatio: Number((window.devicePixelRatio || 1).toFixed(4)),
-        visualViewportScale: Number((window.visualViewport?.scale || 1).toFixed(4)),
+        devicePixelRatio: window.devicePixelRatio || 1,
+        viewportScale: window.visualViewport ? window.visualViewport.scale : 1,
         screenWidth: window.screen.width,
         screenHeight: window.screen.height
       };
     }
-
-    function formatEnvironment(env) {
-      if (!env) return 'Ei tallennettua ympäristötietoa.';
-      return `Kalibrointi tehty ikkunalla ${env.innerWidth}×${env.innerHeight}, devicePixelRatio ${env.devicePixelRatio}, viewport-scale ${env.visualViewportScale}.`;
+    function isEnvironmentDifferent(saved){
+      if (!saved || !saved.environment) return false;
+      const now = captureEnvironment();
+      const e = saved.environment;
+      return e.innerWidth !== now.innerWidth || e.innerHeight !== now.innerHeight || e.outerWidth !== now.outerWidth || e.outerHeight !== now.outerHeight || Math.abs((e.devicePixelRatio||1)-(now.devicePixelRatio||1))>0.001 || Math.abs((e.viewportScale||1)-(now.viewportScale||1))>0.001 || e.screenWidth !== now.screenWidth || e.screenHeight !== now.screenHeight;
     }
-
-    function environmentsDiffer(saved, current) {
-      if (!saved) return true;
-      return saved.innerWidth !== current.innerWidth ||
-        saved.innerHeight !== current.innerHeight ||
-        saved.outerWidth !== current.outerWidth ||
-        saved.outerHeight !== current.outerHeight ||
-        saved.devicePixelRatio !== current.devicePixelRatio ||
-        saved.visualViewportScale !== current.visualViewportScale ||
-        saved.screenWidth !== current.screenWidth ||
-        saved.screenHeight !== current.screenHeight;
-    }
-
-    function getSavedCalibration() {
+    function getSavedCalibration(){
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-          return { ...DEFAULTS, environment: null };
-        }
+        if (!raw) return { redIndex:1, greenIndex:1, pxPerMm:1, environment:null };
         const parsed = JSON.parse(raw);
-        return {
-          redIndex: clampIndex(parsed.redIndex),
-          greenIndex: clampIndex(parsed.greenIndex),
-          pxPerMm: normalizePxPerMm(parsed.pxPerMm),
-          environment: parsed.environment || null
-        };
-      } catch {
-        return { ...DEFAULTS, environment: null };
-      }
+        return { redIndex:clampIndex(parsed.redIndex), greenIndex:clampIndex(parsed.greenIndex), pxPerMm:Number(parsed.pxPerMm)||1, environment:parsed.environment||null };
+      } catch { return { redIndex:1, greenIndex:1, pxPerMm:1, environment:null }; }
     }
-
-    function saveCalibration(redIndex, greenIndex, pxPerMm) {
-      const payload = {
-        redIndex: clampIndex(redIndex),
-        greenIndex: clampIndex(greenIndex),
-        pxPerMm: normalizePxPerMm(pxPerMm),
-        environment: getEnvironmentSnapshot(),
-        savedAt: new Date().toISOString()
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-      return payload;
+    function saveCalibration(redIndex, greenIndex, pxPerMm){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ redIndex, greenIndex, pxPerMm, environment:captureEnvironment() }));
     }
-
-    function applyCalibration(redIndex, greenIndex, pxPerMm) {
+    function applyCalibration(redIndex, greenIndex, pxPerMm){
       const red = RED_PRESETS[clampIndex(redIndex)];
       const green = GREEN_PRESETS[clampIndex(greenIndex)];
-      const pxValue = normalizePxPerMm(pxPerMm);
       document.documentElement.style.setProperty('--bar-red', red);
       document.documentElement.style.setProperty('--bar-green', green);
-      document.documentElement.style.setProperty('--ref-line-px', `${(pxValue * 300).toFixed(2)}px`);
-      statusText.textContent = `Punainen ${clampIndex(redIndex)} (${red}) · Vihreä ${clampIndex(greenIndex)} (${green}) · Näyttö ${pxValue.toFixed(4)} px/mm`;
+      document.documentElement.style.setProperty('--line-300mm-px', `${(Number(pxPerMm)||1)*300}px`);
+      $('statusText').textContent = `Punainen ${clampIndex(redIndex)} (${red}) · Vihreä ${clampIndex(greenIndex)} (${green}) · ${(Number(pxPerMm)||1).toFixed(4)} px/mm`;
     }
-
-    function showHorizontal() {
-      horizontalTest.hidden = false;
-      verticalTest.hidden = true;
-      horizontalBtn.classList.add('active');
-      verticalBtn.classList.remove('active');
-    }
-
-    function showVertical() {
-      horizontalTest.hidden = true;
-      verticalTest.hidden = false;
-      horizontalBtn.classList.remove('active');
-      verticalBtn.classList.add('active');
-    }
-
-    function getZoomWarning() {
-      const vvScale = Number((window.visualViewport?.scale || 1).toFixed(4));
-      if (vvScale !== 1) {
-        return `Selainzoomin pitää olla 100 %. Nykyinen viewport-scale on ${vvScale}.`;
-      }
-      return 'Selainzoomin pitää olla 100 %. Selaimet eivät aina paljasta zoomia luotettavasti, joten tarkista 300 mm viiva aina mittatikulla.';
-    }
-
-    function updateEnvironmentWarnings() {
+    function updateWarnings(){
       const saved = getSavedCalibration();
-      const current = getEnvironmentSnapshot();
-      const changed = environmentsDiffer(saved.environment, current);
-      zoomBanner.textContent = getZoomWarning() + (changed ? ' Kalibrointiympäristö näyttää muuttuneen, joten uudelleenkalibrointi on suositeltava.' : '');
-      dialogZoomWarning.textContent = getZoomWarning();
-      savedEnvironmentInfo.textContent = formatEnvironment(saved.environment);
-      savedEnvironmentInfo.classList.toggle('hidden', !saved.environment);
-
-      if (changed && saved.environment) {
-        dialogEnvironmentWarning.textContent = 'Tallennettu kalibrointi on tehty eri selainikkunan tai näytön asetuksilla. Tee kalibrointi uudelleen.';
-        dialogEnvironmentWarning.classList.remove('hidden');
-      } else if (!saved.environment) {
-        dialogEnvironmentWarning.textContent = 'Näyttökalibrointia ei ole vielä tallennettu. Tee kalibrointi ennen varsinaista testiä.';
-        dialogEnvironmentWarning.classList.remove('hidden');
-      } else {
-        dialogEnvironmentWarning.textContent = '';
-        dialogEnvironmentWarning.classList.add('hidden');
-      }
+      const warnings = ['Varmista että selainzoomi on 100 %. Tarkista 300 mm viiva mittatikulla ennen testiä.'];
+      if (isEnvironmentDifferent(saved)) warnings.push('Ympäristö on muuttunut kalibroinnin jälkeen. Tee kalibrointi uudelleen.');
+      $('warningBox').textContent = warnings.join(' ');
     }
-
-    horizontalBtn.addEventListener('click', showHorizontal);
-    verticalBtn.addEventListener('click', showVertical);
-
-    openCalibrationBtn.addEventListener('click', () => {
-      const saved = getSavedCalibration();
-      redIndexInput.value = saved.redIndex;
-      greenIndexInput.value = saved.greenIndex;
-      pxPerMmInput.value = normalizePxPerMm(saved.pxPerMm).toFixed(4);
-      errorText.textContent = '';
-      updateEnvironmentWarnings();
-      calibrationDialog.showModal();
+    function showHorizontal(){ $('horizontalTest').hidden=false; $('verticalTest').hidden=true; $('showHorizontal').classList.add('active'); $('showVertical').classList.remove('active'); }
+    function showVertical(){ $('horizontalTest').hidden=true; $('verticalTest').hidden=false; $('showHorizontal').classList.remove('active'); $('showVertical').classList.add('active'); }
+    $('showHorizontal').addEventListener('click', showHorizontal);
+    $('showVertical').addEventListener('click', showVertical);
+    $('openCalibration').addEventListener('click', ()=>{
+      const saved=getSavedCalibration(); $('redIndex').value=saved.redIndex; $('greenIndex').value=saved.greenIndex; $('pxPerMm').value=(saved.pxPerMm||1).toFixed(4); $('errorText').textContent=''; $('calibrationDialog').showModal();
     });
-
-    cancelCalibrationBtn.addEventListener('click', () => calibrationDialog.close());
-
-    resetDefaultBtn.addEventListener('click', () => {
-      saveCalibration(DEFAULTS.redIndex, DEFAULTS.greenIndex, DEFAULTS.pxPerMm);
-      applyCalibration(DEFAULTS.redIndex, DEFAULTS.greenIndex, DEFAULTS.pxPerMm);
-      updateEnvironmentWarnings();
+    $('cancelCalibration').addEventListener('click', ()=> $('calibrationDialog').close());
+    $('resetDefault').addEventListener('click', ()=>{
+      saveCalibration(1,1,1); applyCalibration(1,1,1); updateWarnings();
     });
-
-    calibrationForm.addEventListener('submit', (event) => {
+    $('calibrationForm').addEventListener('submit', (event)=>{
       event.preventDefault();
-      const redIndex = Number(redIndexInput.value);
-      const greenIndex = Number(greenIndexInput.value);
-      const pxPerMm = Number(pxPerMmInput.value);
-
-      if (!Number.isInteger(redIndex) || redIndex < 1 || redIndex > 12 ||
-          !Number.isInteger(greenIndex) || greenIndex < 1 || greenIndex > 12) {
-        errorText.textContent = 'Anna punaiselle ja vihreälle kokonaisluku väliltä 1–12.';
-        return;
+      const redIndex=Number($('redIndex').value), greenIndex=Number($('greenIndex').value), pxPerMm=Number($('pxPerMm').value);
+      if (!Number.isInteger(redIndex)||redIndex<1||redIndex>12||!Number.isInteger(greenIndex)||greenIndex<1||greenIndex>12||!(pxPerMm>0)) {
+        $('errorText').textContent='Anna punaiselle ja vihreälle kokonaisluku 1–12 sekä positiivinen px/mm-arvo.'; return;
       }
-
-      if (!Number.isFinite(pxPerMm) || pxPerMm <= 0) {
-        errorText.textContent = 'Anna näyttökalibroinnille positiivinen px/mm-arvo.';
-        return;
-      }
-
-      const saved = saveCalibration(redIndex, greenIndex, pxPerMm);
-      applyCalibration(saved.redIndex, saved.greenIndex, saved.pxPerMm);
-      calibrationDialog.close();
-      updateEnvironmentWarnings();
+      saveCalibration(redIndex, greenIndex, pxPerMm); applyCalibration(redIndex, greenIndex, pxPerMm); $('calibrationDialog').close(); updateWarnings();
     });
-
-    window.addEventListener('resize', updateEnvironmentWarnings);
-    window.visualViewport?.addEventListener('resize', updateEnvironmentWarnings);
-
-    const initial = getSavedCalibration();
-    applyCalibration(initial.redIndex, initial.greenIndex, initial.pxPerMm);
-    updateEnvironmentWarnings();
+    window.addEventListener('resize', updateWarnings);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', updateWarnings);
+    const initial=getSavedCalibration(); applyCalibration(initial.redIndex, initial.greenIndex, initial.pxPerMm); updateWarnings();
   </script>
 </body>
 </html>
