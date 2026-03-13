@@ -97,10 +97,10 @@
   <dialog id="calibrationDialog">
     <form method="dialog" class="dialog-inner" id="calibrationForm">
       <h2>Kalibroi</h2>
-      <div class="help">Anna punainen 1–12, vihreä 1–12 ja mittakalibroinnista saatu px/mm-arvo. Selainzoomin tulee olla 100 %.</div>
-      <div class="field"><label for="redIndex">Punainen (1–12)</label><input id="redIndex" name="redIndex" type="number" min="1" max="12" step="1" required /></div>
-      <div class="field"><label for="greenIndex">Vihreä (1–12)</label><input id="greenIndex" name="greenIndex" type="number" min="1" max="12" step="1" required /></div>
-      <div class="field"><label for="pxPerMm">Näyttökalibrointi (px/mm)</label><input id="pxPerMm" name="pxPerMm" type="number" min="0.01" step="0.0001" required /></div>
+      <div class="help">Voit päivittää punaisen, vihreän tai mittakalibroinnin erikseen. Jätä kenttä tyhjäksi, jos et halua muuttaa sitä. Selainzoomin tulee olla 100 %.</div>
+      <div class="field"><label for="redIndex">Punainen (1–12)</label><input id="redIndex" name="redIndex" type="number" min="1" max="12" step="1" /></div>
+      <div class="field"><label for="greenIndex">Vihreä (1–12)</label><input id="greenIndex" name="greenIndex" type="number" min="1" max="12" step="1" /></div>
+      <div class="field"><label for="pxPerMm">Näyttökalibrointi (px/mm)</label><input id="pxPerMm" name="pxPerMm" type="number" min="0.01" step="0.0001" /></div>
       <div class="error" id="errorText"></div>
       <div class="dialog-actions"><button type="button" id="cancelCalibration">Peruuta</button><button type="submit">Tallenna</button></div>
     </form>
@@ -160,7 +160,11 @@
     $('showHorizontal').addEventListener('click', showHorizontal);
     $('showVertical').addEventListener('click', showVertical);
     $('openCalibration').addEventListener('click', ()=>{
-      const saved=getSavedCalibration(); $('redIndex').value=saved.redIndex; $('greenIndex').value=saved.greenIndex; $('pxPerMm').value=(saved.pxPerMm||1).toFixed(4); $('errorText').textContent=''; $('calibrationDialog').showModal();
+      $('redIndex').value='';
+      $('greenIndex').value='';
+      $('pxPerMm').value='';
+      $('errorText').textContent='';
+      $('calibrationDialog').showModal();
     });
     $('cancelCalibration').addEventListener('click', ()=> $('calibrationDialog').close());
     $('resetDefault').addEventListener('click', ()=>{
@@ -168,11 +172,36 @@
     });
     $('calibrationForm').addEventListener('submit', (event)=>{
       event.preventDefault();
-      const redIndex=Number($('redIndex').value), greenIndex=Number($('greenIndex').value), pxPerMm=Number($('pxPerMm').value);
-      if (!Number.isInteger(redIndex)||redIndex<1||redIndex>12||!Number.isInteger(greenIndex)||greenIndex<1||greenIndex>12||!(pxPerMm>0)) {
-        $('errorText').textContent='Anna punaiselle ja vihreälle kokonaisluku 1–12 sekä positiivinen px/mm-arvo.'; return;
+      const saved = getSavedCalibration();
+      const redRaw = $('redIndex').value.trim();
+      const greenRaw = $('greenIndex').value.trim();
+      const pxRaw = $('pxPerMm').value.trim();
+
+      const redIndex = redRaw === '' ? saved.redIndex : Number(redRaw);
+      const greenIndex = greenRaw === '' ? saved.greenIndex : Number(greenRaw);
+      const pxPerMm = pxRaw === '' ? saved.pxPerMm : Number(pxRaw);
+
+      if (redRaw === '' && greenRaw === '' && pxRaw === '') {
+        $('errorText').textContent='Anna vähintään yksi arvo tai peruuta.';
+        return;
       }
-      saveCalibration(redIndex, greenIndex, pxPerMm); applyCalibration(redIndex, greenIndex, pxPerMm); $('calibrationDialog').close(); updateWarnings();
+      if (!Number.isInteger(redIndex) || redIndex < 1 || redIndex > 12) {
+        $('errorText').textContent='Punaisen arvon pitää olla kokonaisluku 1–12.';
+        return;
+      }
+      if (!Number.isInteger(greenIndex) || greenIndex < 1 || greenIndex > 12) {
+        $('errorText').textContent='Vihreän arvon pitää olla kokonaisluku 1–12.';
+        return;
+      }
+      if (!(pxPerMm > 0)) {
+        $('errorText').textContent='px/mm-arvon pitää olla positiivinen luku.';
+        return;
+      }
+
+      saveCalibration(redIndex, greenIndex, pxPerMm);
+      applyCalibration(redIndex, greenIndex, pxPerMm);
+      $('calibrationDialog').close();
+      updateWarnings();
     });
     window.addEventListener('resize', updateWarnings);
     if (window.visualViewport) window.visualViewport.addEventListener('resize', updateWarnings);
