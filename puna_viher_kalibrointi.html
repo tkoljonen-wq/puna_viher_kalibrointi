@@ -64,8 +64,8 @@
       display: grid;
       place-items: center;
       padding: 20px;
+      padding-right: 0;
       position: relative;
-      overflow: hidden;
     }
     .canvas {
       width: min(78vmin, 820px);
@@ -84,6 +84,7 @@
       height: 4px;
       background: #fff;
       outline: 1px solid #444;
+      z-index: 10;
     }
     .shape-label {
       position: absolute;
@@ -182,8 +183,8 @@
     </div>
 
     <div class="canvas-wrap">
+      <div class="verify-line hidden" id="verifyLine"></div>
       <div class="canvas" id="canvas">
-        <div class="verify-line hidden" id="verifyLine"></div>
         <div class="shape-label" id="shapeLabel">Punainen risti</div>
         <div class="shape cross" id="shape" aria-hidden="true"></div>
 
