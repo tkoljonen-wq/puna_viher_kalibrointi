@@ -79,11 +79,10 @@
     .verify-line {
       position: absolute;
       top: 18px;
-      left: 50%;
-      transform: translateX(-50%);
+      right: 0;
       width: var(--mm-line-px);
       height: 4px;
-      background: #000;
+      background: #fff;
       outline: 1px solid #444;
     }
     .shape-label {
@@ -139,22 +138,23 @@
   <aside class="sidebar">
     <div>
       <h1>Puna–viherkalibrointi</h1>
-      <p class="small" style="margin-top:8px;">Kalibroi ensin punainen ja vihreä. Tee sen jälkeen mittakalibrointi 300 mm viivalla.</p>
+      <p class="small" style="margin-top:8px;">Kalibroi ensin punainen ja vihreä. Mittakalibrointi (200 mm) voidaan tehdä milloin tahansa.</p>
     </div>
 
     <div class="card">
       <h2>Vaiheet</h2>
       <p class="small" style="margin-top:8px;">1. Katso vihreän linssin läpi ja valitse punainen sävy 1–12.</p>
       <p class="small" style="margin-top:6px;">2. Katso punaisen linssin läpi ja valitse vihreä sävy 1–12.</p>
-      <p class="small" style="margin-top:6px;">3. Paina <b>Mittakalibrointi</b> ja säädä viiva tasan 300 mm pitkäksi.</p>
+      <p class="small" style="margin-top:6px;">3. Paina <b>Mittakalibrointi</b> ja säädä viiva tasan 200 mm pitkäksi. Viivan oikea reuna on kiinni ruudun reunassa, vasen pääty liikkuu.</p>
     </div>
 
     <div class="card">
       <h2>Näppäimet</h2>
-      <p class="small" style="margin-top:8px;">← / ↑ = edellinen vaihtoehto</p>
-      <p class="small" style="margin-top:6px;">→ / ↓ = seuraava vaihtoehto</p>
+      <p class="small" style="margin-top:8px;">← / ↑ = edellinen vaihtoehto / lyhennä viivaa</p>
+      <p class="small" style="margin-top:6px;">→ / ↓ = seuraava vaihtoehto / pidennä viivaa</p>
       <p class="small" style="margin-top:6px;">Enter = vahvista kenttään kirjoitettu numero</p>
       <p class="small" style="margin-top:6px;">R = aloita alusta</p>
+      <p class="small" style="margin-top:6px;">PgUp / PgDn = säädä viivaa ±10 px</p>
     </div>
 
     <div class="card">
@@ -207,7 +207,7 @@
             </div>
             <div class="card">
               <h3>Mittakalibrointi</h3>
-              <p class="small" id="resultMmLabel" style="margin-top:8px;">300 mm viiva</p>
+              <p class="small" id="resultMmLabel" style="margin-top:8px;">200 mm viiva</p>
               <p class="small mono" id="resultPxPerMm" style="margin-top:6px;"></p>
               <p class="small mono" id="resultLinePx" style="margin-top:6px;"></p>
             </div>
@@ -229,12 +229,15 @@
       <button id="measureBtn" type="button">Mittakalibrointi</button>
       <button id="smallerBtn" type="button" class="hidden">−</button>
       <button id="largerBtn" type="button" class="hidden">+</button>
+      <button id="backToColorsBtn" type="button" class="hidden">Takaisin väreihin</button>
       <button id="restartBtn" type="button">Aloita alusta</button>
       <span class="status" id="status"></span>
     </div>
   </main>
 
   <script>
+    const MM_LENGTH = 200;
+
     const redOptions = [
       { hex: '#FF0000' },{ hex: '#F00000' },{ hex: '#E00000' },{ hex: '#D00000' },
       { hex: '#C00000' },{ hex: '#B00000' },{ hex: '#FF1010' },{ hex: '#FF2000' },
@@ -245,7 +248,7 @@
       { hex: '#00CC00' },{ hex: '#00C000' },{ hex: '#00B000' },{ hex: '#10FF10' },
       { hex: '#20E020' },{ hex: '#00AA00' },{ hex: '#008F00' },{ hex: '#007A00' }
     ];
-    const state = { phase: 'red', index: 0, redChoice: null, greenChoice: null, linePx: null, mmMode: false };
+    const state = { phase: 'red', index: 0, redChoice: null, greenChoice: null, linePx: null, mmMode: false, phaseBeforeMm: null };
 
     const optionNumber = document.getElementById('optionNumber');
     const hexValue = document.getElementById('hexValue');
@@ -269,6 +272,7 @@
     const smallerBtn = document.getElementById('smallerBtn');
     const largerBtn = document.getElementById('largerBtn');
     const verifyLine = document.getElementById('verifyLine');
+    const backToColorsBtn = document.getElementById('backToColorsBtn');
 
     function hexToRgb(hex) {
       const clean = hex.replace('#', '');
@@ -284,7 +288,10 @@
     function updateChoiceTexts() {
       redChoiceText.textContent = state.redChoice ? `Punainen: vaihtoehto ${state.redChoice.index} (${state.redChoice.hex})` : 'Punainen: ei vielä valittu';
       greenChoiceText.textContent = state.greenChoice ? `Vihreä: vaihtoehto ${state.greenChoice.index} (${state.greenChoice.hex})` : 'Vihreä: ei vielä valittu';
-      mmChoiceText.textContent = state.linePx ? `Mittakalibrointi: ${state.linePx.toFixed(1)} px / 300 mm = ${(state.linePx/300).toFixed(4)} px/mm` : 'Mittakalibrointi: ei vielä tehty';
+      mmChoiceText.textContent = state.linePx ? `Mittakalibrointi: ${state.linePx.toFixed(1)} px / ${MM_LENGTH} mm = ${(state.linePx/MM_LENGTH).toFixed(4)} px/mm` : 'Mittakalibrointi: ei vielä tehty';
+    }
+    function canFinish() {
+      return state.redChoice && state.greenChoice && state.linePx;
     }
     function render() {
       if (state.phase === 'done') {
@@ -304,8 +311,10 @@
         measureBtn.disabled = true;
         smallerBtn.classList.add('hidden');
         largerBtn.classList.add('hidden');
+        backToColorsBtn.classList.add('hidden');
         verifyLine.classList.remove('hidden');
         document.documentElement.style.setProperty('--mm-line-px', `${state.linePx}px`);
+        updateChoiceTexts();
         return;
       }
       resultsPanel.classList.add('hidden');
@@ -318,21 +327,28 @@
       nextBtn.disabled = state.mmMode;
       smallerBtn.classList.toggle('hidden', !state.mmMode);
       largerBtn.classList.toggle('hidden', !state.mmMode);
+      backToColorsBtn.classList.toggle('hidden', !state.mmMode);
 
       if (state.mmMode) {
-        optionNumber.textContent = '300';
+        optionNumber.textContent = String(MM_LENGTH);
         hexValue.textContent = `${state.linePx.toFixed(1)} px`;
-        rgbValue.textContent = `${(state.linePx/300).toFixed(4)} px/mm`;
+        rgbValue.textContent = `${(state.linePx/MM_LENGTH).toFixed(4)} px/mm`;
         currentSwatch.style.background = '#000';
-        phaseTitle.textContent = 'Vaihe 3: mittakalibrointi';
-        phaseInstruction.textContent = 'Laita 30 cm mittatikku viivan päälle. Säädä − / + kunnes viiva on täsmälleen 300 mm.';
+        phaseTitle.textContent = 'Mittakalibrointi';
+        phaseInstruction.textContent = `Laita ${MM_LENGTH / 10} cm mittatikku viivan päälle. Säädä − / + (tai nuolinäppäimet) kunnes viiva on täsmälleen ${MM_LENGTH} mm. Viivan oikea reuna on kiinni ruudun reunassa. Paina "Vahvista mittakalibrointi" tai "Takaisin väreihin".`;
         shape.className = 'shape hidden';
         shape.innerHTML = '';
         shapeLabel.classList.add('hidden');
         document.documentElement.style.setProperty('--mm-line-px', `${state.linePx}px`);
+        // Update confirm button text in mm mode
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Vahvista mittakalibrointi';
         updateChoiceTexts();
         return;
       }
+
+      // Restore confirm button text
+      confirmBtn.textContent = 'Vahvista';
 
       const hex = getCurrentColor();
       const rgb = hexToRgb(hex);
@@ -360,20 +376,34 @@
       updateChoiceTexts();
     }
     function move(step) {
-      if (state.phase === 'done' || state.mmMode) return;
+      if (state.phase === 'done') return;
+      if (state.mmMode) { adjustLine(step); return; }
       const options = currentOptions();
       state.index = (state.index + step + options.length) % options.length;
       setStatus('');
       render();
     }
     function openMeasureMode() {
-      if (!state.redChoice || !state.greenChoice) {
-        setStatus('Tallenna ensin punainen ja vihreä vaihtoehto.', 'error');
-        return;
+      if (state.phase === 'done') return;
+      // Save current phase so we can return to it
+      if (!state.mmMode) {
+        state.phaseBeforeMm = state.phase;
       }
       state.mmMode = true;
-      if (!state.linePx) state.linePx = 300;
-      setStatus('Säädä 300 mm viiva oikeaan pituuteen.', 'success');
+      if (!state.linePx) state.linePx = 200;
+      setStatus(`Säädä ${MM_LENGTH} mm viiva oikeaan pituuteen.`, 'success');
+      render();
+    }
+    function backToColors() {
+      if (!state.mmMode) return;
+      state.mmMode = false;
+      // Restore the phase we were in before mm mode
+      if (state.phaseBeforeMm) {
+        state.phase = state.phaseBeforeMm;
+      }
+      if (state.linePx) {
+        setStatus(`Mittakalibrointi tallennettu: ${state.linePx.toFixed(1)} px / ${MM_LENGTH} mm`, 'success');
+      }
       render();
     }
     function adjustLine(delta) {
@@ -382,8 +412,12 @@
       render();
     }
     function finish() {
-      if (!state.linePx) {
-        setStatus('Tee ensin mittakalibrointi.', 'error');
+      if (!canFinish()) {
+        const missing = [];
+        if (!state.redChoice) missing.push('punainen');
+        if (!state.greenChoice) missing.push('vihreä');
+        if (!state.linePx) missing.push('mittakalibrointi');
+        setStatus(`Puuttuu vielä: ${missing.join(', ')}.`, 'error');
         return;
       }
       state.phase = 'done';
@@ -398,16 +432,30 @@
       document.getElementById('resultGreenHex').textContent = `Hex: ${state.greenChoice.hex}`;
       document.getElementById('resultGreenRgb').textContent = `RGB: (${gg.r}, ${gg.g}, ${gg.b})`;
       document.getElementById('resultGreenSwatch').style.background = state.greenChoice.hex;
-      document.getElementById('resultPxPerMm').textContent = `px/mm: ${(state.linePx/300).toFixed(4)}`;
-      document.getElementById('resultLinePx').textContent = `300 mm = ${state.linePx.toFixed(1)} px`;
+      document.getElementById('resultPxPerMm').textContent = `px/mm: ${(state.linePx/MM_LENGTH).toFixed(4)}`;
+      document.getElementById('resultLinePx').textContent = `${MM_LENGTH} mm = ${state.linePx.toFixed(1)} px`;
       document.getElementById('copyBlock').textContent =
-`redIndex: ${state.redChoice.index}\nredHex: ${state.redChoice.hex}\ngreenIndex: ${state.greenChoice.index}\ngreenHex: ${state.greenChoice.hex}\npxPerMm: ${(state.linePx/300).toFixed(6)}\nline300mmPx: ${state.linePx.toFixed(2)}`;
+`redIndex: ${state.redChoice.index}\nredHex: ${state.redChoice.hex}\ngreenIndex: ${state.greenChoice.index}\ngreenHex: ${state.greenChoice.hex}\npxPerMm: ${(state.linePx/MM_LENGTH).toFixed(6)}\nline${MM_LENGTH}mmPx: ${state.linePx.toFixed(2)}`;
       setStatus('Kalibrointi valmis.', 'success');
       render();
     }
     function confirmSelection() {
       if (state.phase === 'done') return;
-      if (state.mmMode) { finish(); return; }
+      if (state.mmMode) {
+        // Confirm mm calibration and go back to colors
+        setStatus(`Mittakalibrointi tallennettu: ${state.linePx.toFixed(1)} px / ${MM_LENGTH} mm`, 'success');
+        state.mmMode = false;
+        if (state.phaseBeforeMm) {
+          state.phase = state.phaseBeforeMm;
+        }
+        // Check if everything is done
+        if (canFinish()) {
+          finish();
+          return;
+        }
+        render();
+        return;
+      }
       const raw = choiceInput.value.trim();
       const n = Number(raw);
       const options = currentOptions();
@@ -426,14 +474,24 @@
         state.greenChoice = chosen;
         choiceInput.value = '';
         setStatus(`Vihreä tallennettu: vaihtoehto ${chosen.index} ${chosen.hex}`, 'success');
+        // Check if everything is done
+        if (canFinish()) {
+          finish();
+          return;
+        }
       }
       render();
     }
     function restart() {
-      state.phase = 'red'; state.index = 0; state.redChoice = null; state.greenChoice = null; state.linePx = null; state.mmMode = false;
-      choiceInput.value = ''; shape.innerHTML = ''; setStatus('Kalibrointi nollattu.', 'success'); render();
+      state.phase = 'red'; state.index = 0; state.redChoice = null; state.greenChoice = null; state.linePx = null; state.mmMode = false; state.phaseBeforeMm = null;
+      choiceInput.value = ''; shape.innerHTML = ''; setStatus('Kalibrointi nollattu.', 'success');
+      confirmBtn.textContent = 'Vahvista';
+      render();
     }
     document.addEventListener('keydown', (event) => {
+      // Don't capture R if typing in input
+      if (event.key.toLowerCase() === 'r' && document.activeElement === choiceInput) return;
+
       if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { event.preventDefault(); state.mmMode ? adjustLine(-1) : move(-1); }
       else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { event.preventDefault(); state.mmMode ? adjustLine(1) : move(1); }
       else if (event.key === 'Enter') { event.preventDefault(); confirmSelection(); }
@@ -448,6 +506,7 @@
     measureBtn.addEventListener('click', openMeasureMode);
     smallerBtn.addEventListener('click', () => adjustLine(-1));
     largerBtn.addEventListener('click', () => adjustLine(1));
+    backToColorsBtn.addEventListener('click', backToColors);
     render();
   </script>
 </body>
