@@ -15,12 +15,12 @@
       --target-bg: #efefef;
       --bar-red: #ff0000;
       --bar-green: #00ff00;
-      --line-300mm-px: 300px;
+      --line-200mm-px: 200px;
     }
     * { box-sizing: border-box; }
     body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); }
     .wrap { max-width: 1200px; margin: 0 auto; padding: 20px; }
-    .verify-line { width: var(--line-300mm-px); height: 4px; background: #000; margin: 0 auto 14px; }
+    .verify-line { width: var(--line-200mm-px); height: 4px; background: #000; margin: 0 auto 14px; }
     .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px; padding: 12px; background: var(--panel); border: 1px solid #c8c8c8; border-radius: 10px; }
     button { border: 1px solid #333; background: white; color: #111; padding: 10px 14px; border-radius: 8px; font-size: 16px; cursor: pointer; }
     button.active { background: #111; color: white; }
@@ -69,7 +69,7 @@
 <body>
   <div class="wrap">
     <div class="verify-line" id="verifyLine"></div>
-    <div class="warning" id="warningBox">Varmista että selainzoomi on 100 %. Tarkista 300 mm viiva mittatikulla ennen testiä.</div>
+    <div class="warning" id="warningBox">Varmista että selainzoomi on 100 %. Tarkista 200 mm viiva mittatikulla ennen testiä.</div>
     <div class="toolbar">
       <button id="showHorizontal" class="active" type="button">Vaakatesti</button>
       <button id="showVertical" type="button">Pystytesti</button>
@@ -146,12 +146,12 @@
       const green = GREEN_PRESETS[clampIndex(greenIndex)];
       document.documentElement.style.setProperty('--bar-red', red);
       document.documentElement.style.setProperty('--bar-green', green);
-      document.documentElement.style.setProperty('--line-300mm-px', `${(Number(pxPerMm)||1)*300}px`);
+      document.documentElement.style.setProperty('--line-200mm-px', `${(Number(pxPerMm)||1)*200}px`);
       $('statusText').textContent = `Punainen ${clampIndex(redIndex)} (${red}) · Vihreä ${clampIndex(greenIndex)} (${green}) · ${(Number(pxPerMm)||1).toFixed(4)} px/mm`;
     }
     function updateWarnings(){
       const saved = getSavedCalibration();
-      const warnings = ['Varmista että selainzoomi on 100 %. Tarkista 300 mm viiva mittatikulla ennen testiä.'];
+      const warnings = ['Varmista että selainzoomi on 100 %. Tarkista 200 mm viiva mittatikulla ennen testiä.'];
       if (isEnvironmentDifferent(saved)) warnings.push('Ympäristö on muuttunut kalibroinnin jälkeen. Tee kalibrointi uudelleen.');
       $('warningBox').textContent = warnings.join(' ');
     }
