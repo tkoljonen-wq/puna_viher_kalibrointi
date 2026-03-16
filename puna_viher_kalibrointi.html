@@ -13,10 +13,12 @@
       --muted: #b0b0b0;
       --ok: #6bff8a;
       --danger: #ff6b6b;
-      --shape-color: #ff0000;
-      --mm-line-px: 300px;
+      --shape-color: rgb(226, 0, 0);
+      --mm-line-px: 200px;
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       background: var(--bg);
@@ -26,6 +28,7 @@
       display: grid;
       grid-template-columns: 360px 1fr;
     }
+
     .sidebar {
       border-right: 1px solid var(--panel-border);
       background: #090909;
@@ -34,15 +37,18 @@
       flex-direction: column;
       gap: 16px;
     }
+
     .main {
       display: grid;
       grid-template-rows: auto 1fr auto;
       min-height: 100vh;
     }
+
     .topbar, .bottombar {
       padding: 16px 20px;
       border-bottom: 1px solid var(--panel-border);
     }
+
     .bottombar {
       border-top: 1px solid var(--panel-border);
       border-bottom: none;
@@ -51,22 +57,26 @@
       gap: 12px;
       align-items: center;
     }
-    h1,h2,h3,p { margin: 0; }
+
+    h1, h2, h3, p { margin: 0; }
+
     .small { color: var(--muted); font-size: 14px; line-height: 1.45; }
     .mono { font-family: Consolas, Monaco, monospace; }
+
     .card {
       background: var(--panel);
       border: 1px solid var(--panel-border);
       border-radius: 12px;
       padding: 14px;
     }
+
     .canvas-wrap {
       display: grid;
       place-items: center;
       padding: 20px;
-      padding-right: 0;
       position: relative;
     }
+
     .canvas {
       width: min(78vmin, 820px);
       height: min(78vmin, 820px);
@@ -76,16 +86,18 @@
       border: 1px solid #1d1d1d;
       background: #000;
     }
+
     .verify-line {
-      position: absolute;
-      top: 18px;
+      position: fixed;
+      top: 78px;
       right: 0;
       width: var(--mm-line-px);
       height: 4px;
       background: #fff;
       outline: 1px solid #444;
-      z-index: 10;
+      z-index: 1000;
     }
+
     .shape-label {
       position: absolute;
       top: 56px;
@@ -94,44 +106,89 @@
       color: #d0d0d0;
       font-size: 18px;
     }
-    .shape { width: 340px; height: 340px; position: relative; }
-    .cross::before, .cross::after {
+
+    .shape {
+      width: 340px;
+      height: 340px;
+      position: relative;
+    }
+
+    .cross::before,
+    .cross::after {
       content: "";
       position: absolute;
       background: var(--shape-color);
       border-radius: 4px;
     }
+
     .cross::before { width: 84px; height: 340px; left: 128px; top: 0; }
     .cross::after { width: 340px; height: 84px; left: 0; top: 128px; }
+
     .rings { display: grid; place-items: center; }
     .ring { position: absolute; border: 20px solid var(--shape-color); border-radius: 50%; }
     .ring.r1 { width: 340px; height: 340px; }
     .ring.r2 { width: 230px; height: 230px; }
     .ring.r3 { width: 120px; height: 120px; }
+
     .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    button, input {
+
+    button {
       font: inherit;
       border-radius: 10px;
       border: 1px solid #3a3a3a;
       padding: 10px 12px;
+      background: #171717;
+      color: var(--text);
+      cursor: pointer;
     }
-    button { background: #171717; color: var(--text); cursor: pointer; }
+
     button:hover { background: #202020; }
-    input { background: #0f0f0f; color: var(--text); width: 120px; }
-    .badge { display: inline-block; padding: 6px 10px; border-radius: 999px; background: #1a1a1a; border: 1px solid #333; font-size: 13px; }
-    .current-swatch { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #555; display: inline-block; vertical-align: middle; margin-left: 8px; background: var(--shape-color); }
-    .big-number { font-size: 48px; font-weight: 700; line-height: 1; margin-top: 8px; }
+    button:disabled { opacity: 0.55; cursor: default; }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      font-size: 13px;
+    }
+
+    .current-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid #555;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 8px;
+      background: var(--shape-color);
+    }
+
+    .big-number { font-size: 40px; font-weight: 700; line-height: 1.1; margin-top: 8px; }
     .status { font-size: 15px; color: var(--muted); min-height: 22px; }
     .success { color: var(--ok); }
     .error { color: var(--danger); }
     .results-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 12px; }
     .result-swatch { width: 64px; height: 64px; border-radius: 10px; border: 1px solid #555; margin-top: 10px; }
     .hidden { display: none !important; }
+
+    .channel-grid {
+      display: grid;
+      grid-template-columns: auto auto auto auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .channel-grid .label { min-width: 18px; font-weight: 700; }
+    .channel-value { min-width: 56px; text-align: center; }
+
     @media (max-width: 980px) {
       body { grid-template-columns: 1fr; }
       .sidebar { border-right: none; border-bottom: 1px solid var(--panel-border); }
       .canvas { width: min(92vw, 820px); height: min(92vw, 820px); }
       .shape { transform: scale(0.82); }
+      .verify-line { top: 18px; }
     }
   </style>
 </head>
@@ -139,39 +196,38 @@
   <aside class="sidebar">
     <div>
       <h1>Puna–viherkalibrointi</h1>
-      <p class="small" style="margin-top:8px;">Kalibroi ensin punainen ja vihreä. Mittakalibrointi (200 mm) voidaan tehdä milloin tahansa.</p>
+      <p class="small" style="margin-top:8px;">Punaiselle ja vihreälle on vapaa RGB-säätö. Mittakalibrointi 200 mm voidaan tehdä milloin tahansa.</p>
     </div>
 
     <div class="card">
       <h2>Vaiheet</h2>
-      <p class="small" style="margin-top:8px;">1. Katso vihreän linssin läpi ja valitse punainen sävy 1–12.</p>
-      <p class="small" style="margin-top:6px;">2. Katso punaisen linssin läpi ja valitse vihreä sävy 1–12.</p>
-      <p class="small" style="margin-top:6px;">3. Paina <b>Mittakalibrointi</b> ja säädä viiva tasan 200 mm pitkäksi. Viivan oikea reuna on kiinni ruudun reunassa, vasen pääty liikkuu.</p>
+      <p class="small" style="margin-top:8px;">1. Katso vihreän linssin läpi ja säädä punainen väri.</p>
+      <p class="small" style="margin-top:6px;">2. Katso punaisen linssin läpi ja säädä vihreä väri.</p>
+      <p class="small" style="margin-top:6px;">3. Paina <b>Mittakalibrointi</b> ja säädä viiva tasan 200 mm pitkäksi. Viivan oikea reuna pysyy paikallaan.</p>
     </div>
 
     <div class="card">
       <h2>Näppäimet</h2>
-      <p class="small" style="margin-top:8px;">← / ↑ = edellinen vaihtoehto / lyhennä viivaa</p>
-      <p class="small" style="margin-top:6px;">→ / ↓ = seuraava vaihtoehto / pidennä viivaa</p>
-      <p class="small" style="margin-top:6px;">Enter = vahvista kenttään kirjoitettu numero</p>
+      <p class="small" style="margin-top:8px;">Nuolinäppäimet = säädä väriä tai mittaviivaa</p>
+      <p class="small" style="margin-top:6px;">Enter = vahvista nykyinen vaihe</p>
+      <p class="small" style="margin-top:6px;">PgUp / PgDn = säädä mittaviivaa ±10 px</p>
       <p class="small" style="margin-top:6px;">R = aloita alusta</p>
-      <p class="small" style="margin-top:6px;">PgUp / PgDn = säädä viivaa ±10 px</p>
     </div>
 
     <div class="card">
-      <h2>Nykyinen vaihtoehto</h2>
-      <div class="big-number" id="optionNumber">1</div>
+      <h2>Nykyinen väri</h2>
+      <div class="big-number" id="currentColorName">Punainen</div>
       <div class="row" style="margin-top:10px;">
-        <span class="badge mono" id="hexValue">#FF0000</span>
+        <span class="badge mono" id="hexValue">#E20000</span>
         <span class="current-swatch" id="currentSwatch"></span>
       </div>
-      <p class="small mono" id="rgbValue" style="margin-top:10px;">rgb(255, 0, 0)</p>
+      <p class="small mono" id="rgbValue" style="margin-top:10px;">rgb(226, 0, 0)</p>
     </div>
 
     <div class="card">
       <h2>Valinnat</h2>
-      <p class="small" id="redChoiceText" style="margin-top:8px;">Punainen: ei vielä valittu</p>
-      <p class="small" id="greenChoiceText" style="margin-top:6px;">Vihreä: ei vielä valittu</p>
+      <p class="small" id="redChoiceText" style="margin-top:8px;">Punainen: rgb(226, 0, 0)</p>
+      <p class="small" id="greenChoiceText" style="margin-top:6px;">Vihreä: rgb(0, 127, 0)</p>
       <p class="small" id="mmChoiceText" style="margin-top:6px;">Mittakalibrointi: ei vielä tehty</p>
     </div>
   </aside>
@@ -179,7 +235,7 @@
   <main class="main">
     <div class="topbar">
       <h2 id="phaseTitle">Vaihe 1: punaisen kalibrointi</h2>
-      <p class="small" id="phaseInstruction" style="margin-top:6px;">Katso vihreän linssin läpi. Vaihda nuolinäppäimillä vaihtoehtoja ja etsi punainen sävy, joka häviää parhaiten.</p>
+      <p class="small" id="phaseInstruction" style="margin-top:6px;">Katso vihreän linssin läpi ja säädä punaisen R-, G- ja B-arvoja. Oletus on laitteistosi mukainen rgb(226, 0, 0).</p>
     </div>
 
     <div class="canvas-wrap">
@@ -194,15 +250,13 @@
           <div class="results-grid">
             <div class="card">
               <h3>Punainen</h3>
-              <p class="small" id="resultRedIndex" style="margin-top:8px;"></p>
-              <p class="small mono" id="resultRedHex" style="margin-top:6px;"></p>
+              <p class="small mono" id="resultRedHex" style="margin-top:8px;"></p>
               <p class="small mono" id="resultRedRgb" style="margin-top:6px;"></p>
               <div class="result-swatch" id="resultRedSwatch"></div>
             </div>
             <div class="card">
               <h3>Vihreä</h3>
-              <p class="small" id="resultGreenIndex" style="margin-top:8px;"></p>
-              <p class="small mono" id="resultGreenHex" style="margin-top:6px;"></p>
+              <p class="small mono" id="resultGreenHex" style="margin-top:8px;"></p>
               <p class="small mono" id="resultGreenRgb" style="margin-top:6px;"></p>
               <div class="result-swatch" id="resultGreenSwatch"></div>
             </div>
@@ -222,11 +276,26 @@
     </div>
 
     <div class="bottombar">
-      <label for="choiceInput">Valitse paras vaihtoehto:</label>
-      <input id="choiceInput" type="number" min="1" step="1" inputmode="numeric" placeholder="Numero" />
-      <button id="confirmBtn" type="button">Vahvista</button>
-      <button id="prevBtn" type="button">Edellinen</button>
-      <button id="nextBtn" type="button">Seuraava</button>
+      <div id="colorControls" class="channel-grid">
+        <span class="label">R</span>
+        <button id="rMinusBtn" type="button">−</button>
+        <div class="badge mono channel-value" id="rValue">226</div>
+        <button id="rPlusBtn" type="button">+</button>
+
+        <span class="label">G</span>
+        <button id="gMinusBtn" type="button">−</button>
+        <div class="badge mono channel-value" id="gValue">0</div>
+        <button id="gPlusBtn" type="button">+</button>
+
+        <span class="label">B</span>
+        <button id="bMinusBtn" type="button">−</button>
+        <div class="badge mono channel-value" id="bValue">0</div>
+        <button id="bPlusBtn" type="button">+</button>
+      </div>
+
+      <button id="confirmBtn" type="button">Vahvista väri</button>
+      <button id="prevBtn" type="button">Punainen</button>
+      <button id="nextBtn" type="button">Vihreä</button>
       <button id="measureBtn" type="button">Mittakalibrointi</button>
       <button id="smallerBtn" type="button" class="hidden">−</button>
       <button id="largerBtn" type="button" class="hidden">+</button>
@@ -238,20 +307,22 @@
 
   <script>
     const MM_LENGTH = 200;
+    const DEFAULT_RED = { r: 226, g: 0, b: 0 };
+    const DEFAULT_GREEN = { r: 0, g: 127, b: 0 };
 
-    const redOptions = [
-      { hex: '#FF0000' },{ hex: '#F00000' },{ hex: '#E00000' },{ hex: '#D00000' },
-      { hex: '#C00000' },{ hex: '#B00000' },{ hex: '#FF1010' },{ hex: '#FF2000' },
-      { hex: '#FF3000' },{ hex: '#E01010' },{ hex: '#D02020' },{ hex: '#CC1010' }
-    ];
-    const greenOptions = [
-      { hex: '#00FF00' },{ hex: '#00F000' },{ hex: '#00E000' },{ hex: '#00D000' },
-      { hex: '#00CC00' },{ hex: '#00C000' },{ hex: '#00B000' },{ hex: '#10FF10' },
-      { hex: '#20E020' },{ hex: '#00AA00' },{ hex: '#008F00' },{ hex: '#007A00' }
-    ];
-    const state = { phase: 'red', index: 0, redChoice: null, greenChoice: null, linePx: null, mmMode: false, phaseBeforeMm: null };
+    const state = {
+      phase: 'red',
+      redCurrent: { ...DEFAULT_RED },
+      greenCurrent: { ...DEFAULT_GREEN },
+      redChoice: { ...DEFAULT_RED },
+      greenChoice: { ...DEFAULT_GREEN },
+      linePx: null,
+      mmMode: false,
+      phaseBeforeMm: null,
+      activeChannel: 'r'
+    };
 
-    const optionNumber = document.getElementById('optionNumber');
+    const currentColorName = document.getElementById('currentColorName');
     const hexValue = document.getElementById('hexValue');
     const rgbValue = document.getElementById('rgbValue');
     const currentSwatch = document.getElementById('currentSwatch');
@@ -259,7 +330,6 @@
     const phaseInstruction = document.getElementById('phaseInstruction');
     const shape = document.getElementById('shape');
     const shapeLabel = document.getElementById('shapeLabel');
-    const choiceInput = document.getElementById('choiceInput');
     const statusEl = document.getElementById('status');
     const redChoiceText = document.getElementById('redChoiceText');
     const greenChoiceText = document.getElementById('greenChoiceText');
@@ -274,29 +344,63 @@
     const largerBtn = document.getElementById('largerBtn');
     const verifyLine = document.getElementById('verifyLine');
     const backToColorsBtn = document.getElementById('backToColorsBtn');
+    const colorControls = document.getElementById('colorControls');
+    const rValue = document.getElementById('rValue');
+    const gValue = document.getElementById('gValue');
+    const bValue = document.getElementById('bValue');
 
-    function hexToRgb(hex) {
-      const clean = hex.replace('#', '');
-      const bigint = parseInt(clean, 16);
-      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    function clampByte(value) {
+      return Math.max(0, Math.min(255, value));
     }
-    function currentOptions() { return state.phase === 'red' ? redOptions : greenOptions; }
-    function getCurrentColor() { return currentOptions()[state.index].hex; }
+
+    function rgbToHex({ r, g, b }) {
+      const toHex = (n) => n.toString(16).padStart(2, '0').toUpperCase();
+      return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    }
+
+    function rgbText({ r, g, b }) {
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function currentColorObj() {
+      return state.phase === 'green' ? state.greenCurrent : state.redCurrent;
+    }
+
+    function currentSavedColorObj() {
+      return state.phase === 'green' ? state.greenChoice : state.redChoice;
+    }
+
     function setStatus(message = '', type = '') {
       statusEl.textContent = message;
       statusEl.className = `status ${type}`.trim();
     }
+
     function updateChoiceTexts() {
-      redChoiceText.textContent = state.redChoice ? `Punainen: vaihtoehto ${state.redChoice.index} (${state.redChoice.hex})` : 'Punainen: ei vielä valittu';
-      greenChoiceText.textContent = state.greenChoice ? `Vihreä: vaihtoehto ${state.greenChoice.index} (${state.greenChoice.hex})` : 'Vihreä: ei vielä valittu';
-      mmChoiceText.textContent = state.linePx ? `Mittakalibrointi: ${state.linePx.toFixed(1)} px / ${MM_LENGTH} mm = ${(state.linePx/MM_LENGTH).toFixed(4)} px/mm` : 'Mittakalibrointi: ei vielä tehty';
+      redChoiceText.textContent = `Punainen: ${rgbText(state.redChoice)} (${rgbToHex(state.redChoice)})`;
+      greenChoiceText.textContent = `Vihreä: ${rgbText(state.greenChoice)} (${rgbToHex(state.greenChoice)})`;
+      mmChoiceText.textContent = state.linePx
+        ? `Mittakalibrointi: ${state.linePx.toFixed(1)} px / ${MM_LENGTH} mm = ${(state.linePx / MM_LENGTH).toFixed(4)} px/mm`
+        : 'Mittakalibrointi: ei vielä tehty';
     }
+
     function canFinish() {
-      return state.redChoice && state.greenChoice && state.linePx;
+      return Boolean(state.redChoice && state.greenChoice && state.linePx);
     }
+
+    function renderColorInfo(color) {
+      const hex = rgbToHex(color);
+      hexValue.textContent = hex;
+      rgbValue.textContent = rgbText(color);
+      currentSwatch.style.background = hex;
+      document.documentElement.style.setProperty('--shape-color', hex);
+      rValue.textContent = color.r;
+      gValue.textContent = color.g;
+      bValue.textContent = color.b;
+    }
+
     function render() {
       if (state.phase === 'done') {
-        optionNumber.textContent = '—';
+        currentColorName.textContent = 'Valmis';
         hexValue.textContent = 'Valmis';
         rgbValue.textContent = '';
         currentSwatch.style.background = '#000';
@@ -305,7 +409,7 @@
         shape.classList.add('hidden');
         shapeLabel.classList.add('hidden');
         resultsPanel.classList.remove('hidden');
-        choiceInput.disabled = true;
+        colorControls.classList.add('hidden');
         confirmBtn.disabled = true;
         prevBtn.disabled = true;
         nextBtn.disabled = true;
@@ -318,138 +422,122 @@
         updateChoiceTexts();
         return;
       }
+
       resultsPanel.classList.add('hidden');
       shape.classList.remove('hidden');
-      shapeLabel.classList.remove('hidden');
       verifyLine.classList.toggle('hidden', !state.mmMode);
-      choiceInput.disabled = state.mmMode;
-      confirmBtn.disabled = state.mmMode;
-      prevBtn.disabled = state.mmMode;
-      nextBtn.disabled = state.mmMode;
       smallerBtn.classList.toggle('hidden', !state.mmMode);
       largerBtn.classList.toggle('hidden', !state.mmMode);
       backToColorsBtn.classList.toggle('hidden', !state.mmMode);
+      colorControls.classList.toggle('hidden', state.mmMode);
+      prevBtn.disabled = state.mmMode;
+      nextBtn.disabled = state.mmMode;
+      measureBtn.disabled = false;
+      confirmBtn.disabled = false;
 
       if (state.mmMode) {
-        optionNumber.textContent = String(MM_LENGTH);
+        currentColorName.textContent = 'Mitta';
         hexValue.textContent = `${state.linePx.toFixed(1)} px`;
-        rgbValue.textContent = `${(state.linePx/MM_LENGTH).toFixed(4)} px/mm`;
-        currentSwatch.style.background = '#000';
+        rgbValue.textContent = `${(state.linePx / MM_LENGTH).toFixed(4)} px/mm`;
+        currentSwatch.style.background = '#fff';
         phaseTitle.textContent = 'Mittakalibrointi';
-        phaseInstruction.textContent = `Laita ${MM_LENGTH / 10} cm mittatikku viivan päälle. Säädä − / + (tai nuolinäppäimet) kunnes viiva on täsmälleen ${MM_LENGTH} mm. Viivan oikea reuna on kiinni ruudun reunassa. Paina "Vahvista mittakalibrointi" tai "Takaisin väreihin".`;
+        phaseInstruction.textContent = `Laita 20 cm mittatikku viivan päälle. Säädä − / + kunnes viiva on täsmälleen ${MM_LENGTH} mm. Viivan oikea reuna pysyy paikallaan ja vain vasen pää liikkuu.`;
         shape.className = 'shape hidden';
         shape.innerHTML = '';
         shapeLabel.classList.add('hidden');
-        document.documentElement.style.setProperty('--mm-line-px', `${state.linePx}px`);
-        // Update confirm button text in mm mode
-        confirmBtn.disabled = false;
         confirmBtn.textContent = 'Vahvista mittakalibrointi';
+        document.documentElement.style.setProperty('--mm-line-px', `${state.linePx}px`);
         updateChoiceTexts();
         return;
       }
 
-      // Restore confirm button text
-      confirmBtn.textContent = 'Vahvista';
-
-      const hex = getCurrentColor();
-      const rgb = hexToRgb(hex);
-      optionNumber.textContent = String(state.index + 1);
-      hexValue.textContent = hex;
-      rgbValue.textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-      currentSwatch.style.background = hex;
-      document.documentElement.style.setProperty('--shape-color', hex);
+      confirmBtn.textContent = 'Vahvista väri';
       shapeLabel.classList.remove('hidden');
+      const color = currentColorObj();
+      renderColorInfo(color);
 
       if (state.phase === 'red') {
+        currentColorName.textContent = 'Punainen';
         phaseTitle.textContent = 'Vaihe 1: punaisen kalibrointi';
-        phaseInstruction.textContent = 'Katso vihreän linssin läpi. Vaihda nuolinäppäimillä vaihtoehtoja ja etsi punainen sävy, joka häviää parhaiten.';
+        phaseInstruction.textContent = 'Katso vihreän linssin läpi ja säädä punaisen R-, G- ja B-arvoja. Oletus on rgb(226, 0, 0).';
         shape.className = 'shape cross';
         shape.innerHTML = '';
         shapeLabel.textContent = 'Punainen risti';
       } else {
+        currentColorName.textContent = 'Vihreä';
         phaseTitle.textContent = 'Vaihe 2: vihreän kalibrointi';
-        phaseInstruction.textContent = 'Katso punaisen linssin läpi. Vaihda nuolinäppäimillä vaihtoehtoja ja etsi vihreä sävy, joka häviää parhaiten.';
+        phaseInstruction.textContent = 'Katso punaisen linssin läpi ja säädä vihreän R-, G- ja B-arvoja. Oletus on rgb(0, 127, 0).';
         shape.className = 'shape rings';
         shape.innerHTML = '<div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>';
         shapeLabel.textContent = 'Vihreät ympyrät';
       }
-      choiceInput.placeholder = `1–${currentOptions().length}`;
+
       updateChoiceTexts();
     }
-    function move(step) {
-      if (state.phase === 'done') return;
-      if (state.mmMode) { adjustLine(step); return; }
-      const options = currentOptions();
-      state.index = (state.index + step + options.length) % options.length;
+
+    function adjustChannel(channel, delta) {
+      if (state.mmMode || state.phase === 'done') return;
+      const color = currentColorObj();
+      color[channel] = clampByte(color[channel] + delta);
+      state.activeChannel = channel;
       setStatus('');
       render();
     }
+
     function openMeasureMode() {
       if (state.phase === 'done') return;
-      // Save current phase so we can return to it
-      if (!state.mmMode) {
-        state.phaseBeforeMm = state.phase;
-      }
+      if (!state.mmMode) state.phaseBeforeMm = state.phase;
       state.mmMode = true;
       if (!state.linePx) state.linePx = 200;
       setStatus(`Säädä ${MM_LENGTH} mm viiva oikeaan pituuteen.`, 'success');
       render();
     }
+
     function backToColors() {
       if (!state.mmMode) return;
       state.mmMode = false;
-      // Restore the phase we were in before mm mode
-      if (state.phaseBeforeMm) {
-        state.phase = state.phaseBeforeMm;
-      }
-      if (state.linePx) {
-        setStatus(`Mittakalibrointi tallennettu: ${state.linePx.toFixed(1)} px / ${MM_LENGTH} mm`, 'success');
-      }
+      if (state.phaseBeforeMm) state.phase = state.phaseBeforeMm;
+      if (state.linePx) setStatus(`Mittakalibrointi tallennettu: ${state.linePx.toFixed(1)} px / ${MM_LENGTH} mm`, 'success');
       render();
     }
+
     function adjustLine(delta) {
       if (!state.mmMode) return;
       state.linePx = Math.max(50, state.linePx + delta);
       render();
     }
+
     function finish() {
       if (!canFinish()) {
         const missing = [];
-        if (!state.redChoice) missing.push('punainen');
-        if (!state.greenChoice) missing.push('vihreä');
         if (!state.linePx) missing.push('mittakalibrointi');
         setStatus(`Puuttuu vielä: ${missing.join(', ')}.`, 'error');
         return;
       }
+
       state.phase = 'done';
       state.mmMode = false;
-      const rr = hexToRgb(state.redChoice.hex);
-      const gg = hexToRgb(state.greenChoice.hex);
-      document.getElementById('resultRedIndex').textContent = `Vaihtoehto ${state.redChoice.index}`;
-      document.getElementById('resultRedHex').textContent = `Hex: ${state.redChoice.hex}`;
-      document.getElementById('resultRedRgb').textContent = `RGB: (${rr.r}, ${rr.g}, ${rr.b})`;
-      document.getElementById('resultRedSwatch').style.background = state.redChoice.hex;
-      document.getElementById('resultGreenIndex').textContent = `Vaihtoehto ${state.greenChoice.index}`;
-      document.getElementById('resultGreenHex').textContent = `Hex: ${state.greenChoice.hex}`;
-      document.getElementById('resultGreenRgb').textContent = `RGB: (${gg.r}, ${gg.g}, ${gg.b})`;
-      document.getElementById('resultGreenSwatch').style.background = state.greenChoice.hex;
-      document.getElementById('resultPxPerMm').textContent = `px/mm: ${(state.linePx/MM_LENGTH).toFixed(4)}`;
+      document.getElementById('resultRedHex').textContent = `Hex: ${rgbToHex(state.redChoice)}`;
+      document.getElementById('resultRedRgb').textContent = `RGB: (${state.redChoice.r}, ${state.redChoice.g}, ${state.redChoice.b})`;
+      document.getElementById('resultRedSwatch').style.background = rgbToHex(state.redChoice);
+      document.getElementById('resultGreenHex').textContent = `Hex: ${rgbToHex(state.greenChoice)}`;
+      document.getElementById('resultGreenRgb').textContent = `RGB: (${state.greenChoice.r}, ${state.greenChoice.g}, ${state.greenChoice.b})`;
+      document.getElementById('resultGreenSwatch').style.background = rgbToHex(state.greenChoice);
+      document.getElementById('resultPxPerMm').textContent = `px/mm: ${(state.linePx / MM_LENGTH).toFixed(4)}`;
       document.getElementById('resultLinePx').textContent = `${MM_LENGTH} mm = ${state.linePx.toFixed(1)} px`;
       document.getElementById('copyBlock').textContent =
-`redIndex: ${state.redChoice.index}\nredHex: ${state.redChoice.hex}\ngreenIndex: ${state.greenChoice.index}\ngreenHex: ${state.greenChoice.hex}\npxPerMm: ${(state.linePx/MM_LENGTH).toFixed(6)}\nline${MM_LENGTH}mmPx: ${state.linePx.toFixed(2)}`;
+`redRgb: ${state.redChoice.r}, ${state.redChoice.g}, ${state.redChoice.b}\nredHex: ${rgbToHex(state.redChoice)}\ngreenRgb: ${state.greenChoice.r}, ${state.greenChoice.g}, ${state.greenChoice.b}\ngreenHex: ${rgbToHex(state.greenChoice)}\npxPerMm: ${(state.linePx / MM_LENGTH).toFixed(6)}\nline${MM_LENGTH}mmPx: ${state.linePx.toFixed(2)}`;
       setStatus('Kalibrointi valmis.', 'success');
       render();
     }
+
     function confirmSelection() {
       if (state.phase === 'done') return;
+
       if (state.mmMode) {
-        // Confirm mm calibration and go back to colors
         setStatus(`Mittakalibrointi tallennettu: ${state.linePx.toFixed(1)} px / ${MM_LENGTH} mm`, 'success');
         state.mmMode = false;
-        if (state.phaseBeforeMm) {
-          state.phase = state.phaseBeforeMm;
-        }
-        // Check if everything is done
+        if (state.phaseBeforeMm) state.phase = state.phaseBeforeMm;
         if (canFinish()) {
           finish();
           return;
@@ -457,57 +545,100 @@
         render();
         return;
       }
-      const raw = choiceInput.value.trim();
-      const n = Number(raw);
-      const options = currentOptions();
-      if (!Number.isInteger(n) || n < 1 || n > options.length) {
-        setStatus(`Syötä numero väliltä 1–${options.length}.`, 'error');
-        return;
-      }
-      const chosen = { index: n, hex: options[n - 1].hex };
+
       if (state.phase === 'red') {
-        state.redChoice = chosen;
+        state.redChoice = { ...state.redCurrent };
         state.phase = 'green';
-        state.index = 0;
-        choiceInput.value = '';
-        setStatus(`Punainen tallennettu: vaihtoehto ${chosen.index} ${chosen.hex}`, 'success');
+        setStatus(`Punainen tallennettu: ${rgbText(state.redChoice)} ${rgbToHex(state.redChoice)}`, 'success');
       } else {
-        state.greenChoice = chosen;
-        choiceInput.value = '';
-        setStatus(`Vihreä tallennettu: vaihtoehto ${chosen.index} ${chosen.hex}`, 'success');
-        // Check if everything is done
+        state.greenChoice = { ...state.greenCurrent };
+        setStatus(`Vihreä tallennettu: ${rgbText(state.greenChoice)} ${rgbToHex(state.greenChoice)}`, 'success');
         if (canFinish()) {
           finish();
           return;
         }
       }
-      render();
-    }
-    function restart() {
-      state.phase = 'red'; state.index = 0; state.redChoice = null; state.greenChoice = null; state.linePx = null; state.mmMode = false; state.phaseBeforeMm = null;
-      choiceInput.value = ''; shape.innerHTML = ''; setStatus('Kalibrointi nollattu.', 'success');
-      confirmBtn.textContent = 'Vahvista';
-      render();
-    }
-    document.addEventListener('keydown', (event) => {
-      // Don't capture R if typing in input
-      if (event.key.toLowerCase() === 'r' && document.activeElement === choiceInput) return;
 
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { event.preventDefault(); state.mmMode ? adjustLine(1) : move(-1); }
-      else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { event.preventDefault(); state.mmMode ? adjustLine(-1) : move(1); }
-      else if (event.key === 'Enter') { event.preventDefault(); confirmSelection(); }
-      else if (event.key.toLowerCase() === 'r') { event.preventDefault(); restart(); }
-      else if (state.mmMode && event.key === 'PageDown') { event.preventDefault(); adjustLine(-10); }
-      else if (state.mmMode && event.key === 'PageUp') { event.preventDefault(); adjustLine(10); }
+      render();
+    }
+
+    function switchPhase(phase) {
+      if (state.mmMode || state.phase === 'done') return;
+      state.phase = phase;
+      render();
+    }
+
+    function restart() {
+      state.phase = 'red';
+      state.redCurrent = { ...DEFAULT_RED };
+      state.greenCurrent = { ...DEFAULT_GREEN };
+      state.redChoice = { ...DEFAULT_RED };
+      state.greenChoice = { ...DEFAULT_GREEN };
+      state.linePx = null;
+      state.mmMode = false;
+      state.phaseBeforeMm = null;
+      state.activeChannel = 'r';
+      shape.innerHTML = '';
+      setStatus('Kalibrointi nollattu.', 'success');
+      render();
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (state.phase === 'done') return;
+
+      if (state.mmMode) {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          event.preventDefault();
+          adjustLine(-1);
+        } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+          event.preventDefault();
+          adjustLine(1);
+        } else if (event.key === 'PageDown') {
+          event.preventDefault();
+          adjustLine(-10);
+        } else if (event.key === 'PageUp') {
+          event.preventDefault();
+          adjustLine(10);
+        } else if (event.key === 'Enter') {
+          event.preventDefault();
+          confirmSelection();
+        } else if (event.key.toLowerCase() === 'r') {
+          event.preventDefault();
+          restart();
+        }
+        return;
+      }
+
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+        event.preventDefault();
+        adjustChannel(state.activeChannel, -1);
+      } else if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        adjustChannel(state.activeChannel, 1);
+      } else if (event.key.toLowerCase() === 'r') {
+        event.preventDefault();
+        restart();
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        confirmSelection();
+      }
     });
+
+    document.getElementById('rMinusBtn').addEventListener('click', () => adjustChannel('r', -1));
+    document.getElementById('rPlusBtn').addEventListener('click', () => adjustChannel('r', 1));
+    document.getElementById('gMinusBtn').addEventListener('click', () => adjustChannel('g', -1));
+    document.getElementById('gPlusBtn').addEventListener('click', () => adjustChannel('g', 1));
+    document.getElementById('bMinusBtn').addEventListener('click', () => adjustChannel('b', -1));
+    document.getElementById('bPlusBtn').addEventListener('click', () => adjustChannel('b', 1));
     confirmBtn.addEventListener('click', confirmSelection);
-    prevBtn.addEventListener('click', () => move(-1));
-    nextBtn.addEventListener('click', () => move(1));
+    prevBtn.addEventListener('click', () => switchPhase('red'));
+    nextBtn.addEventListener('click', () => switchPhase('green'));
     restartBtn.addEventListener('click', restart);
     measureBtn.addEventListener('click', openMeasureMode);
     smallerBtn.addEventListener('click', () => adjustLine(-1));
     largerBtn.addEventListener('click', () => adjustLine(1));
     backToColorsBtn.addEventListener('click', backToColors);
+
     render();
   </script>
 </body>
