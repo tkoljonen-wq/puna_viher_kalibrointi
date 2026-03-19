@@ -6,113 +6,392 @@
   <title>Fiksaatiodisparaatiotesti</title>
   <style>
     :root {
-      --bg: #e7e7e7;
-      --panel: #f8f8f8;
-      --text: #111;
-      --muted: #555;
-      --border: #222;
-      --test-bg: #cfcfcf;
-      --target-bg: #efefef;
+      --bg: #000000;
+      --panel: #101010;
+      --panel-2: #171717;
+      --text: #f2f2f2;
+      --muted: #b8b8b8;
+      --border: #3a3a3a;
+      --warning-bg: #241d00;
+      --warning-border: #6d5a00;
+      --warning-text: #f1db84;
+
+      --light-area: #dcdcdc;
+      --black: #000000;
       --bar-red: #ff0000;
       --bar-green: #00ff00;
+
       --line-200mm-px: 200px;
+      --target-size-px: 220px;
+      --grid-size-px: 220px;
     }
+
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); }
-    .wrap { max-width: 1200px; margin: 0 auto; padding: 20px; }
-    .verify-line { width: var(--line-200mm-px); height: 4px; background: #000; margin: 0 auto 14px; }
-    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px; padding: 12px; background: var(--panel); border: 1px solid #c8c8c8; border-radius: 10px; }
-    button { border: 1px solid #333; background: white; color: #111; padding: 10px 14px; border-radius: 8px; font-size: 16px; cursor: pointer; }
-    button.active { background: #111; color: white; }
-    .status { margin-left: auto; font-size: 14px; color: var(--muted); max-width: 430px; }
-    .warning { margin-bottom: 10px; font-size: 14px; color: #8a5a00; background: #fff4d6; border: 1px solid #f1d58a; border-radius: 10px; padding: 10px 12px; }
-    .stage { display: flex; justify-content: center; align-items: flex-start; min-height: 72vh; }
-    .test-area { position: relative; background: var(--test-bg); border: 2px solid var(--border); width: min(92vw, 980px); aspect-ratio: 1.55 / 1; overflow: hidden; }
-    .target-box { position: absolute; background: var(--target-bg); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 30px; }
-    .row-target { width: 56%; height: 15%; left: 22%; top: 42.5%; flex-direction: row; }
-    .col-target { width: 20%; height: 62%; left: 40%; top: 19%; flex-direction: column; gap: 22px; }
-    .ring { position: relative; width: 64px; height: 64px; border: 14px solid #000; border-radius: 50%; background: transparent; flex: 0 0 auto; }
-    .cross { position: relative; width: 72px; height: 72px; flex: 0 0 auto; }
-    .cross::before, .cross::after { content: ""; position: absolute; background: #000; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-    .cross::before { width: 18px; height: 72px; }
-    .cross::after { width: 72px; height: 18px; }
-    .bar { position: absolute; }
-    .h-green, .h-red { width: 6%; height: 28%; left: 47%; }
-    .h-green { top: 13%; background: var(--bar-green); }
-    .h-red { top: 59%; background: var(--bar-red); }
-    .v-green, .v-red { width: 32%; height: 7.5%; top: 46.25%; }
-    .v-green { left: 5%; background: var(--bar-green); }
-    .v-red { left: 63%; background: var(--bar-red); }
-    dialog { border: 1px solid #444; border-radius: 12px; padding: 0; width: min(92vw, 520px); }
-    dialog::backdrop { background: rgba(0,0,0,.4); }
-    .dialog-inner { padding: 18px; }
-    .dialog-inner h2 { margin: 0 0 14px; font-size: 22px; }
-    .field { margin-bottom: 14px; }
-    .field label { display: block; font-weight: 600; margin-bottom: 6px; }
-    .field input { width: 100%; padding: 10px; font-size: 16px; border: 1px solid #777; border-radius: 8px; }
-    .help { font-size: 14px; color: var(--muted); margin-bottom: 14px; line-height: 1.4; }
-    .error { color: #b00020; min-height: 1.2em; margin-bottom: 10px; font-size: 14px; }
-    .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
-    .legend { margin-top: 10px; font-size: 14px; color: var(--muted); background: var(--panel); border: 1px solid #c8c8c8; border-radius: 10px; padding: 10px 12px; line-height: 1.45; }
-    @media (max-width: 700px) {
-      .ring { width: 44px; height: 44px; border-width: 10px; }
-      .cross { width: 50px; height: 50px; }
-      .cross::before { width: 12px; height: 50px; }
-      .cross::after { width: 50px; height: 12px; }
-      .row-target { gap: 16px; }
-      .col-target { gap: 14px; }
-      .toolbar { padding: 10px; }
-      .status { width: 100%; margin-left: 0; max-width: none; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .verify-line-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .verify-line {
+      width: var(--line-200mm-px);
+      height: 4px;
+      background: #ffffff;
+      border-radius: 999px;
+    }
+
+    .warning {
+      margin-bottom: 12px;
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--warning-text);
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 14px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid #5a5a5a;
+      background: #202020;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover { background: #2a2a2a; }
+    button:active { transform: translateY(1px); }
+
+    .status {
+      margin-left: auto;
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 760px;
+      line-height: 1.35;
+    }
+
+    .legend {
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--muted);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      line-height: 1.5;
+    }
+
+    .stage {
+      min-height: 72vh;
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+      padding: 24px;
+    }
+
+    .figure-host {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: calc(72vh - 48px);
+      outline: none;
+    }
+
+    .figure {
+      display: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .figure.active {
+      display: block;
+    }
+
+    .round-figure {
+      width: var(--target-size-px);
+      height: var(--target-size-px);
+      display: block;
+    }
+
+    .grid-figure {
+      width: var(--grid-size-px);
+      height: var(--grid-size-px);
+      display: block;
+    }
+
+    dialog {
+      border: 1px solid #4a4a4a;
+      border-radius: 14px;
+      padding: 0;
+      width: min(92vw, 540px);
+      background: #111;
+      color: var(--text);
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    .dialog-inner {
+      padding: 18px;
+    }
+
+    .dialog-inner h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+    }
+
+    .help {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-bottom: 14px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #666;
+      background: #1b1b1b;
+      color: var(--text);
+    }
+
+    .error {
+      color: #ff8080;
+      min-height: 1.2em;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .kbd {
+      font-family: Consolas, monospace;
+      padding: 1px 6px;
+      border: 1px solid #666;
+      border-radius: 6px;
+      background: #1f1f1f;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 860px) {
+      .status {
+        width: 100%;
+        margin-left: 0;
+        max-width: none;
+      }
+
+      .stage {
+        min-height: 62vh;
+        padding: 14px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="verify-line" id="verifyLine"></div>
-    <div class="warning" id="warningBox">Varmista että selainzoomi on 100 %. Tarkista 200 mm viiva mittatikulla ennen testiä.</div>
+    <div class="verify-line-wrap">
+      <div class="verify-line" id="verifyLine" aria-label="200 mm tarkistusviiva"></div>
+    </div>
+
+    <div class="warning" id="warningBox">
+      Varmista että selainzoomi on 100 %. Tarkista 200 mm viiva mittatikulla ennen testiä.
+    </div>
+
     <div class="toolbar">
-      <button id="showHorizontal" class="active" type="button">Vaakatesti</button>
-      <button id="showVertical" type="button">Pystytesti</button>
+      <button id="prevImage" type="button" aria-label="Edellinen kuva">← Edellinen</button>
+      <button id="nextImage" type="button" aria-label="Seuraava kuva">Seuraava →</button>
       <button id="openCalibration" type="button">Kalibroi</button>
       <button id="resetDefault" type="button">Palauta oletus</button>
       <div class="status" id="statusText"></div>
     </div>
+
     <div class="stage">
-      <div class="test-area" id="testArea">
-        <div id="horizontalTest">
-          <div class="bar h-green"></div>
-          <div class="target-box row-target"><div class="ring"></div><div class="cross"></div><div class="ring"></div></div>
-          <div class="bar h-red"></div>
-        </div>
-        <div id="verticalTest" hidden>
-          <div class="bar v-green"></div>
-          <div class="target-box col-target"><div class="ring"></div><div class="cross"></div><div class="ring"></div></div>
-          <div class="bar v-red"></div>
-        </div>
+      <div class="figure-host" id="figureHost" tabindex="0" aria-label="Testikuva-alue">
+        <!-- Kuva 1 -->
+        <svg id="figure1" class="figure round-figure active" viewBox="0 0 1024 1024" aria-label="Kuva 1">
+          <defs>
+            <clipPath id="circleClip1">
+              <circle cx="512" cy="512" r="478"></circle>
+            </clipPath>
+          </defs>
+
+          <g clip-path="url(#circleClip1)">
+            <rect x="0" y="0" width="1024" height="1024" fill="#000000"></rect>
+
+            <rect x="384" y="84" width="258" height="856" fill="var(--light-area)"></rect>
+
+            <rect x="48" y="442" width="290" height="92" fill="var(--bar-green)"></rect>
+            <rect x="686" y="442" width="258" height="92" fill="var(--bar-red)"></rect>
+
+            <rect x="447" y="137" width="110" height="110" fill="none" stroke="#000000" stroke-width="28"></rect>
+            <rect x="447" y="720" width="110" height="110" fill="none" stroke="#000000" stroke-width="28"></rect>
+
+            <rect x="495" y="380" width="34" height="184" fill="#000000"></rect>
+            <rect x="423" y="455" width="178" height="30" fill="#000000"></rect>
+          </g>
+        </svg>
+
+        <!-- Kuva 2 -->
+        <svg id="figure2" class="figure round-figure" viewBox="0 0 1024 1024" aria-label="Kuva 2">
+          <defs>
+            <clipPath id="circleClip2">
+              <circle cx="512" cy="512" r="478"></circle>
+            </clipPath>
+          </defs>
+
+          <g clip-path="url(#circleClip2)">
+            <rect x="0" y="0" width="1024" height="1024" fill="#000000"></rect>
+
+            <rect x="74" y="397" width="876" height="242" fill="var(--light-area)"></rect>
+
+            <rect x="468" y="95" width="90" height="268" fill="var(--bar-red)"></rect>
+            <rect x="468" y="670" width="90" height="284" fill="var(--bar-green)"></rect>
+
+            <rect x="218" y="465" width="110" height="110" fill="none" stroke="#000000" stroke-width="28"></rect>
+            <rect x="696" y="465" width="110" height="110" fill="none" stroke="#000000" stroke-width="28"></rect>
+
+            <rect x="495" y="442" width="34" height="158" fill="#000000"></rect>
+            <rect x="433" y="506" width="158" height="28" fill="#000000"></rect>
+          </g>
+        </svg>
+
+        <!-- Kuva 3 -->
+        <svg id="figure3" class="figure grid-figure" viewBox="0 0 1024 1024" aria-label="Kuva 3">
+          <rect x="0" y="0" width="1024" height="1024" fill="#000000"></rect>
+
+          <rect x="463" y="146" width="98" height="732" fill="var(--bar-red)"></rect>
+          <rect x="268" y="463" width="488" height="98" fill="var(--bar-green)"></rect>
+
+          <rect x="463" y="463" width="98" height="98" fill="#000000"></rect>
+        </svg>
       </div>
     </div>
-    <div class="legend">Syötä punaisen ja vihreän kalibrointinumerot 1–12 sekä mittakalibroinnin arvo <span style="font-family:Consolas,monospace;">px/mm</span>. Ohjelma tallentaa myös selainympäristön tiedot ja varoittaa, jos ne muuttuvat.</div>
+
+    <div class="legend">
+      Kuvien välillä liikutaan nuolinäppäimillä <span class="kbd">←</span> ja <span class="kbd">→</span>.
+      Kalibroinnissa annetaan punaisen ja vihreän sävyindeksit, näytön mittakalibrointi <span class="kbd">px/mm</span>
+      sekä tutkimusetäisyys metreinä. Kuvat skaalautuvat etäisyyden mukaan niin, että niiden näennäinen koko pysyy vakiona.
+    </div>
   </div>
 
   <dialog id="calibrationDialog">
     <form method="dialog" class="dialog-inner" id="calibrationForm">
       <h2>Kalibroi</h2>
-      <div class="help">Voit päivittää punaisen, vihreän tai mittakalibroinnin erikseen. Jätä kenttä tyhjäksi, jos et halua muuttaa sitä. Selainzoomin tulee olla 100 %.</div>
-      <div class="field"><label for="redIndex">Punainen (1–12)</label><input id="redIndex" name="redIndex" type="number" min="1" max="12" step="1" /></div>
-      <div class="field"><label for="greenIndex">Vihreä (1–12)</label><input id="greenIndex" name="greenIndex" type="number" min="1" max="12" step="1" /></div>
-      <div class="field"><label for="pxPerMm">Näyttökalibrointi (px/mm)</label><input id="pxPerMm" name="pxPerMm" type="number" min="0.01" step="0.0001" /></div>
+      <div class="help">
+        Jätä kenttä tyhjäksi, jos et halua muuttaa sitä. Selainzoomin tulee olla 100 %.
+        Tutkimusetäisyys vaikuttaa kuvien fyysiseen kokoon näytöllä.
+      </div>
+
+      <div class="field">
+        <label for="redIndex">Punainen (1–12)</label>
+        <input id="redIndex" name="redIndex" type="number" min="1" max="12" step="1" />
+      </div>
+
+      <div class="field">
+        <label for="greenIndex">Vihreä (1–12)</label>
+        <input id="greenIndex" name="greenIndex" type="number" min="1" max="12" step="1" />
+      </div>
+
+      <div class="field">
+        <label for="pxPerMm">Näyttökalibrointi (px/mm)</label>
+        <input id="pxPerMm" name="pxPerMm" type="number" min="0.01" step="0.0001" />
+      </div>
+
+      <div class="field">
+        <label for="viewingDistanceM">Tutkimusetäisyys (m)</label>
+        <input id="viewingDistanceM" name="viewingDistanceM" type="number" min="0.1" step="0.01" />
+      </div>
+
       <div class="error" id="errorText"></div>
-      <div class="dialog-actions"><button type="button" id="cancelCalibration">Peruuta</button><button type="submit">Tallenna</button></div>
+
+      <div class="dialog-actions">
+        <button type="button" id="cancelCalibration">Peruuta</button>
+        <button type="submit">Tallenna</button>
+      </div>
     </form>
   </dialog>
 
   <script>
-    const RED_PRESETS = {1:'#FF0000',2:'#F00000',3:'#E00000',4:'#D00000',5:'#C00000',6:'#B00000',7:'#FF1010',8:'#FF2000',9:'#FF3000',10:'#E01010',11:'#D02020',12:'#CC1010'};
-    const GREEN_PRESETS = {1:'#00FF00',2:'#00F000',3:'#00E000',4:'#00D000',5:'#00CC00',6:'#00C000',7:'#00B000',8:'#10FF10',9:'#20E020',10:'#00AA00',11:'#008F00',12:'#007A00'};
-    const STORAGE_KEY = 'fd_test_calibration_v2';
+    const RED_PRESETS = {
+      1:'#FF0000', 2:'#F00000', 3:'#E00000', 4:'#D00000',
+      5:'#C00000', 6:'#B00000', 7:'#FF1010', 8:'#FF2000',
+      9:'#FF3000', 10:'#E01010', 11:'#D02020', 12:'#CC1010'
+    };
+
+    const GREEN_PRESETS = {
+      1:'#00FF00', 2:'#00F000', 3:'#00E000', 4:'#00D000',
+      5:'#00CC00', 6:'#00C000', 7:'#00B000', 8:'#10FF10',
+      9:'#20E020', 10:'#00AA00', 11:'#008F00', 12:'#007A00'
+    };
+
+    const STORAGE_KEY = 'fd_test_calibration_v3';
+    const REFERENCE_DISTANCE_M = 5.75;
+    const REFERENCE_SIZE_MM = 110; // 11 cm
     const $ = id => document.getElementById(id);
-    function clampIndex(v){ const n=Number(v); return Number.isInteger(n)&&n>=1&&n<=12?n:1; }
-    function captureEnvironment(){
+
+    const figureIds = ['figure1', 'figure2', 'figure3'];
+    let currentFigureIndex = 0;
+
+    function clampIndex(value) {
+      const n = Number(value);
+      return Number.isInteger(n) && n >= 1 && n <= 12 ? n : 1;
+    }
+
+    function captureEnvironment() {
       return {
         innerWidth: window.innerWidth,
         innerHeight: window.innerHeight,
@@ -124,88 +403,219 @@
         screenHeight: window.screen.height
       };
     }
-    function isEnvironmentDifferent(saved){
+
+    function isEnvironmentDifferent(saved) {
       if (!saved || !saved.environment) return false;
       const now = captureEnvironment();
       const e = saved.environment;
-      return e.innerWidth !== now.innerWidth || e.innerHeight !== now.innerHeight || e.outerWidth !== now.outerWidth || e.outerHeight !== now.outerHeight || Math.abs((e.devicePixelRatio||1)-(now.devicePixelRatio||1))>0.001 || Math.abs((e.viewportScale||1)-(now.viewportScale||1))>0.001 || e.screenWidth !== now.screenWidth || e.screenHeight !== now.screenHeight;
+
+      return (
+        e.innerWidth !== now.innerWidth ||
+        e.innerHeight !== now.innerHeight ||
+        e.outerWidth !== now.outerWidth ||
+        e.outerHeight !== now.outerHeight ||
+        Math.abs((e.devicePixelRatio || 1) - (now.devicePixelRatio || 1)) > 0.001 ||
+        Math.abs((e.viewportScale || 1) - (now.viewportScale || 1)) > 0.001 ||
+        e.screenWidth !== now.screenWidth ||
+        e.screenHeight !== now.screenHeight
+      );
     }
-    function getSavedCalibration(){
+
+    function getDefaultCalibration() {
+      return {
+        redIndex: 1,
+        greenIndex: 1,
+        pxPerMm: 1,
+        viewingDistanceM: 5.75,
+        environment: null
+      };
+    }
+
+    function getSavedCalibration() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return { redIndex:1, greenIndex:1, pxPerMm:1, environment:null };
+        if (!raw) return getDefaultCalibration();
+
         const parsed = JSON.parse(raw);
-        return { redIndex:clampIndex(parsed.redIndex), greenIndex:clampIndex(parsed.greenIndex), pxPerMm:Number(parsed.pxPerMm)||1, environment:parsed.environment||null };
-      } catch { return { redIndex:1, greenIndex:1, pxPerMm:1, environment:null }; }
+        return {
+          redIndex: clampIndex(parsed.redIndex),
+          greenIndex: clampIndex(parsed.greenIndex),
+          pxPerMm: Number(parsed.pxPerMm) || 1,
+          viewingDistanceM: Number(parsed.viewingDistanceM) || 5.75,
+          environment: parsed.environment || null
+        };
+      } catch {
+        return getDefaultCalibration();
+      }
     }
-    function saveCalibration(redIndex, greenIndex, pxPerMm){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ redIndex, greenIndex, pxPerMm, environment:captureEnvironment() }));
+
+    function saveCalibration(redIndex, greenIndex, pxPerMm, viewingDistanceM) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        redIndex,
+        greenIndex,
+        pxPerMm,
+        viewingDistanceM,
+        environment: captureEnvironment()
+      }));
     }
-    function applyCalibration(redIndex, greenIndex, pxPerMm){
+
+    function getScaledPhysicalSizeMm(viewingDistanceM) {
+      return REFERENCE_SIZE_MM * (Number(viewingDistanceM) / REFERENCE_DISTANCE_M);
+    }
+
+    function applyCalibration(redIndex, greenIndex, pxPerMm, viewingDistanceM) {
       const red = RED_PRESETS[clampIndex(redIndex)];
       const green = GREEN_PRESETS[clampIndex(greenIndex)];
+      const pxmm = Number(pxPerMm) || 1;
+      const dist = Number(viewingDistanceM) || 5.75;
+
+      const scaledSizeMm = getScaledPhysicalSizeMm(dist);
+      const scaledSizePx = scaledSizeMm * pxmm;
+
       document.documentElement.style.setProperty('--bar-red', red);
       document.documentElement.style.setProperty('--bar-green', green);
-      document.documentElement.style.setProperty('--line-200mm-px', `${(Number(pxPerMm)||1)*200}px`);
-      $('statusText').textContent = `Punainen ${clampIndex(redIndex)} (${red}) · Vihreä ${clampIndex(greenIndex)} (${green}) · ${(Number(pxPerMm)||1).toFixed(4)} px/mm`;
+      document.documentElement.style.setProperty('--line-200mm-px', `${pxmm * 200}px`);
+      document.documentElement.style.setProperty('--target-size-px', `${scaledSizePx}px`);
+      document.documentElement.style.setProperty('--grid-size-px', `${scaledSizePx}px`);
+
+      $('statusText').textContent =
+        `Kuva ${currentFigureIndex + 1}/3 · Punainen ${clampIndex(redIndex)} (${red}) · ` +
+        `Vihreä ${clampIndex(greenIndex)} (${green}) · ${pxmm.toFixed(4)} px/mm · ` +
+        `Tutkimusetäisyys ${dist.toFixed(2)} m · Kuvakoko ${scaledSizeMm.toFixed(1)} mm`;
     }
-    function updateWarnings(){
+
+    function updateWarnings() {
       const saved = getSavedCalibration();
-      const warnings = ['Varmista että selainzoomi on 100 %. Tarkista 200 mm viiva mittatikulla ennen testiä.'];
-      if (isEnvironmentDifferent(saved)) warnings.push('Ympäristö on muuttunut kalibroinnin jälkeen. Tee kalibrointi uudelleen.');
+      const warnings = [
+        'Varmista että selainzoomi on 100 %. Tarkista 200 mm viiva mittatikulla ennen testiä.'
+      ];
+
+      if (isEnvironmentDifferent(saved)) {
+        warnings.push('Selain- tai näyttöympäristö on muuttunut kalibroinnin jälkeen. Tee kalibrointi uudelleen.');
+      }
+
+      const scaledSizeMm = getScaledPhysicalSizeMm(saved.viewingDistanceM);
+      const scaledSizePx = scaledSizeMm * saved.pxPerMm;
+      const viewportLimit = Math.min(window.innerWidth, window.innerHeight) * 0.92;
+
+      if (scaledSizePx > viewportLimit) {
+        warnings.push('Valitulla etäisyydellä ja px/mm-arvolla kuva ei välttämättä mahdu kokonaan ruudulle oikeassa fyysisessä koossa.');
+      }
+
       $('warningBox').textContent = warnings.join(' ');
     }
-    function showHorizontal(){ $('horizontalTest').hidden=false; $('verticalTest').hidden=true; $('showHorizontal').classList.add('active'); $('showVertical').classList.remove('active'); }
-    function showVertical(){ $('horizontalTest').hidden=true; $('verticalTest').hidden=false; $('showHorizontal').classList.remove('active'); $('showVertical').classList.add('active'); }
-    $('showHorizontal').addEventListener('click', showHorizontal);
-    $('showVertical').addEventListener('click', showVertical);
-    $('openCalibration').addEventListener('click', ()=>{
-      $('redIndex').value='';
-      $('greenIndex').value='';
-      $('pxPerMm').value='';
-      $('errorText').textContent='';
+
+    function showFigure(index) {
+      currentFigureIndex = (index + figureIds.length) % figureIds.length;
+
+      figureIds.forEach((id, i) => {
+        $(id).classList.toggle('active', i === currentFigureIndex);
+      });
+
+      const saved = getSavedCalibration();
+      applyCalibration(saved.redIndex, saved.greenIndex, saved.pxPerMm, saved.viewingDistanceM);
+    }
+
+    function showNextFigure() {
+      showFigure(currentFigureIndex + 1);
+    }
+
+    function showPrevFigure() {
+      showFigure(currentFigureIndex - 1);
+    }
+
+    $('prevImage').addEventListener('click', showPrevFigure);
+    $('nextImage').addEventListener('click', showNextFigure);
+
+    $('openCalibration').addEventListener('click', () => {
+      $('redIndex').value = '';
+      $('greenIndex').value = '';
+      $('pxPerMm').value = '';
+      $('viewingDistanceM').value = '';
+      $('errorText').textContent = '';
       $('calibrationDialog').showModal();
     });
-    $('cancelCalibration').addEventListener('click', ()=> $('calibrationDialog').close());
-    $('resetDefault').addEventListener('click', ()=>{
-      saveCalibration(1,1,1); applyCalibration(1,1,1); updateWarnings();
+
+    $('cancelCalibration').addEventListener('click', () => {
+      $('calibrationDialog').close();
     });
-    $('calibrationForm').addEventListener('submit', (event)=>{
+
+    $('resetDefault').addEventListener('click', () => {
+      const defaults = getDefaultCalibration();
+      saveCalibration(defaults.redIndex, defaults.greenIndex, defaults.pxPerMm, defaults.viewingDistanceM);
+      applyCalibration(defaults.redIndex, defaults.greenIndex, defaults.pxPerMm, defaults.viewingDistanceM);
+      updateWarnings();
+    });
+
+    $('calibrationForm').addEventListener('submit', (event) => {
       event.preventDefault();
+
       const saved = getSavedCalibration();
+
       const redRaw = $('redIndex').value.trim();
       const greenRaw = $('greenIndex').value.trim();
       const pxRaw = $('pxPerMm').value.trim();
+      const distanceRaw = $('viewingDistanceM').value.trim();
 
       const redIndex = redRaw === '' ? saved.redIndex : Number(redRaw);
       const greenIndex = greenRaw === '' ? saved.greenIndex : Number(greenRaw);
       const pxPerMm = pxRaw === '' ? saved.pxPerMm : Number(pxRaw);
+      const viewingDistanceM = distanceRaw === '' ? saved.viewingDistanceM : Number(distanceRaw);
 
-      if (redRaw === '' && greenRaw === '' && pxRaw === '') {
-        $('errorText').textContent='Anna vähintään yksi arvo tai peruuta.';
+      if (redRaw === '' && greenRaw === '' && pxRaw === '' && distanceRaw === '') {
+        $('errorText').textContent = 'Anna vähintään yksi arvo tai peruuta.';
         return;
       }
+
       if (!Number.isInteger(redIndex) || redIndex < 1 || redIndex > 12) {
-        $('errorText').textContent='Punaisen arvon pitää olla kokonaisluku 1–12.';
-        return;
-      }
-      if (!Number.isInteger(greenIndex) || greenIndex < 1 || greenIndex > 12) {
-        $('errorText').textContent='Vihreän arvon pitää olla kokonaisluku 1–12.';
-        return;
-      }
-      if (!(pxPerMm > 0)) {
-        $('errorText').textContent='px/mm-arvon pitää olla positiivinen luku.';
+        $('errorText').textContent = 'Punaisen arvon pitää olla kokonaisluku 1–12.';
         return;
       }
 
-      saveCalibration(redIndex, greenIndex, pxPerMm);
-      applyCalibration(redIndex, greenIndex, pxPerMm);
+      if (!Number.isInteger(greenIndex) || greenIndex < 1 || greenIndex > 12) {
+        $('errorText').textContent = 'Vihreän arvon pitää olla kokonaisluku 1–12.';
+        return;
+      }
+
+      if (!(pxPerMm > 0)) {
+        $('errorText').textContent = 'px/mm-arvon pitää olla positiivinen luku.';
+        return;
+      }
+
+      if (!(viewingDistanceM > 0)) {
+        $('errorText').textContent = 'Tutkimusetäisyyden pitää olla positiivinen luku metreinä.';
+        return;
+      }
+
+      saveCalibration(redIndex, greenIndex, pxPerMm, viewingDistanceM);
+      applyCalibration(redIndex, greenIndex, pxPerMm, viewingDistanceM);
       $('calibrationDialog').close();
       updateWarnings();
     });
+
+    document.addEventListener('keydown', (event) => {
+      const dialogOpen = $('calibrationDialog').open;
+      if (dialogOpen) return;
+
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        showNextFigure();
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        showPrevFigure();
+      }
+    });
+
     window.addEventListener('resize', updateWarnings);
-    if (window.visualViewport) window.visualViewport.addEventListener('resize', updateWarnings);
-    const initial=getSavedCalibration(); applyCalibration(initial.redIndex, initial.greenIndex, initial.pxPerMm); updateWarnings();
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateWarnings);
+    }
+
+    const initial = getSavedCalibration();
+    applyCalibration(initial.redIndex, initial.greenIndex, initial.pxPerMm, initial.viewingDistanceM);
+    updateWarnings();
+    showFigure(0);
+    $('figureHost').focus();
   </script>
 </body>
 </html>
