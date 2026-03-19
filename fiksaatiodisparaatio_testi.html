@@ -6,9 +6,8 @@
   <title>Fiksaatiodisparaatiotesti</title>
   <style>
     :root {
-      --bg: #000000;
+      --app-bg: #000000;
       --panel: #101010;
-      --panel-2: #171717;
       --text: #f2f2f2;
       --muted: #b8b8b8;
       --border: #3a3a3a;
@@ -17,7 +16,6 @@
       --warning-text: #f1db84;
 
       --light-area: #dcdcdc;
-      --black: #000000;
       --bar-red: #ff0000;
       --bar-green: #00ff00;
 
@@ -31,7 +29,7 @@
     html, body {
       margin: 0;
       padding: 0;
-      background: var(--bg);
+      background: var(--app-bg);
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
     }
@@ -113,7 +111,7 @@
 
     .stage {
       min-height: 72vh;
-      background: #000;
+      background: #000000;
       border: 1px solid var(--border);
       border-radius: 14px;
       display: flex;
@@ -130,6 +128,7 @@
       width: 100%;
       min-height: calc(72vh - 48px);
       outline: none;
+      position: relative;
     }
 
     .figure {
@@ -145,13 +144,11 @@
     .round-figure {
       width: var(--target-size-px);
       height: var(--target-size-px);
-      display: block;
     }
 
     .grid-figure {
       width: var(--grid-size-px);
       height: var(--grid-size-px);
-      display: block;
     }
 
     dialog {
@@ -252,8 +249,8 @@
     </div>
 
     <div class="toolbar">
-      <button id="prevImage" type="button" aria-label="Edellinen kuva">← Edellinen</button>
-      <button id="nextImage" type="button" aria-label="Seuraava kuva">Seuraava →</button>
+      <button id="prevImage" type="button">← Edellinen</button>
+      <button id="nextImage" type="button">Seuraava →</button>
       <button id="openCalibration" type="button">Kalibroi</button>
       <button id="resetDefault" type="button">Palauta oletus</button>
       <div class="status" id="statusText"></div>
@@ -261,8 +258,10 @@
 
     <div class="stage">
       <div class="figure-host" id="figureHost" tabindex="0" aria-label="Testikuva-alue">
-        <!-- Kuva 1 -->
+        <!-- Kuva 1: valkoinen tausta -->
         <svg id="figure1" class="figure round-figure active" viewBox="0 0 1024 1024" aria-label="Kuva 1">
+          <rect x="0" y="0" width="1024" height="1024" fill="#ffffff"></rect>
+
           <defs>
             <clipPath id="circleClip1">
               <circle cx="512" cy="512" r="478"></circle>
@@ -271,7 +270,6 @@
 
           <g clip-path="url(#circleClip1)">
             <rect x="0" y="0" width="1024" height="1024" fill="#000000"></rect>
-
             <rect x="384" y="84" width="258" height="856" fill="var(--light-area)"></rect>
 
             <rect x="48" y="442" width="290" height="92" fill="var(--bar-green)"></rect>
@@ -285,8 +283,10 @@
           </g>
         </svg>
 
-        <!-- Kuva 2 -->
+        <!-- Kuva 2: valkoinen tausta -->
         <svg id="figure2" class="figure round-figure" viewBox="0 0 1024 1024" aria-label="Kuva 2">
+          <rect x="0" y="0" width="1024" height="1024" fill="#ffffff"></rect>
+
           <defs>
             <clipPath id="circleClip2">
               <circle cx="512" cy="512" r="478"></circle>
@@ -309,22 +309,22 @@
           </g>
         </svg>
 
-        <!-- Kuva 3 -->
+        <!-- Kuva 3: musta tausta -->
         <svg id="figure3" class="figure grid-figure" viewBox="0 0 1024 1024" aria-label="Kuva 3">
           <rect x="0" y="0" width="1024" height="1024" fill="#000000"></rect>
-
           <rect x="463" y="146" width="98" height="732" fill="var(--bar-red)"></rect>
           <rect x="268" y="463" width="488" height="98" fill="var(--bar-green)"></rect>
-
           <rect x="463" y="463" width="98" height="98" fill="#000000"></rect>
         </svg>
       </div>
     </div>
 
     <div class="legend">
-      Kuvien välillä liikutaan nuolinäppäimillä <span class="kbd">←</span> ja <span class="kbd">→</span>.
-      Kalibroinnissa annetaan punaisen ja vihreän sävyindeksit, näytön mittakalibrointi <span class="kbd">px/mm</span>
-      sekä tutkimusetäisyys metreinä. Kuvat skaalautuvat etäisyyden mukaan niin, että niiden näennäinen koko pysyy vakiona.
+      Näytöllä on aina yksi kuva kerrallaan. Kuvien välillä vaihdetaan nuolinäppäimillä
+      <span class="kbd">←</span> ja <span class="kbd">→</span>.
+      Pallokuvioissa tausta on valkoinen. Ristikkokuviossa tausta on musta.
+      Kalibroinnissa annetaan punaisen ja vihreän sävyindeksit, näytön mittakalibrointi
+      <span class="kbd">px/mm</span> sekä tutkimusetäisyys metreinä.
     </div>
   </div>
 
@@ -333,7 +333,6 @@
       <h2>Kalibroi</h2>
       <div class="help">
         Jätä kenttä tyhjäksi, jos et halua muuttaa sitä. Selainzoomin tulee olla 100 %.
-        Tutkimusetäisyys vaikuttaa kuvien fyysiseen kokoon näytöllä.
       </div>
 
       <div class="field">
@@ -378,11 +377,11 @@
       9:'#20E020', 10:'#00AA00', 11:'#008F00', 12:'#007A00'
     };
 
-    const STORAGE_KEY = 'fd_test_calibration_v3';
+    const STORAGE_KEY = 'fd_test_calibration_v4';
     const REFERENCE_DISTANCE_M = 5.75;
-    const REFERENCE_SIZE_MM = 110; // 11 cm
-    const $ = id => document.getElementById(id);
+    const REFERENCE_SIZE_MM = 110;
 
+    const $ = id => document.getElementById(id);
     const figureIds = ['figure1', 'figure2', 'figure3'];
     let currentFigureIndex = 0;
 
@@ -594,8 +593,7 @@
     });
 
     document.addEventListener('keydown', (event) => {
-      const dialogOpen = $('calibrationDialog').open;
-      if (dialogOpen) return;
+      if ($('calibrationDialog').open) return;
 
       if (event.key === 'ArrowRight') {
         event.preventDefault();
