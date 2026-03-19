@@ -135,6 +135,7 @@
       display: none;
       user-select: none;
       -webkit-user-drag: none;
+      flex: 0 0 auto;
     }
 
     .figure.active {
@@ -258,7 +259,7 @@
 
     <div class="stage">
       <div class="figure-host" id="figureHost" tabindex="0" aria-label="Testikuva-alue">
-        <!-- Kuva 1: valkoinen tausta -->
+        <!-- Kuva 1: pystyversio, valkoinen tausta -->
         <svg id="figure1" class="figure round-figure active" viewBox="0 0 1024 1024" aria-label="Kuva 1">
           <rect x="0" y="0" width="1024" height="1024" fill="#ffffff"></rect>
 
@@ -283,7 +284,7 @@
           </g>
         </svg>
 
-        <!-- Kuva 2: valkoinen tausta -->
+        <!-- Kuva 2: vaakaversio, valkoinen tausta -->
         <svg id="figure2" class="figure round-figure" viewBox="0 0 1024 1024" aria-label="Kuva 2">
           <rect x="0" y="0" width="1024" height="1024" fill="#ffffff"></rect>
 
@@ -309,12 +310,13 @@
           </g>
         </svg>
 
-        <!-- Kuva 3: musta tausta -->
-        <svg id="figure3" class="figure grid-figure" viewBox="0 0 1024 1024" aria-label="Kuva 3">
-          <rect x="0" y="0" width="1024" height="1024" fill="#000000"></rect>
-          <rect x="463" y="146" width="98" height="732" fill="var(--bar-red)"></rect>
-          <rect x="268" y="463" width="488" height="98" fill="var(--bar-green)"></rect>
-          <rect x="463" y="463" width="98" height="98" fill="#000000"></rect>
+        <!-- Kuva 3: ristikko, musta tausta, rajattu oikein -->
+        <svg id="figure3" class="figure grid-figure" viewBox="0 0 520 520" aria-label="Kuva 3">
+          <rect x="0" y="0" width="520" height="520" fill="#000000"></rect>
+
+          <rect x="210" y="40" width="100" height="440" fill="var(--bar-red)"></rect>
+          <rect x="80" y="210" width="360" height="100" fill="var(--bar-green)"></rect>
+          <rect x="210" y="210" width="100" height="100" fill="#000000"></rect>
         </svg>
       </div>
     </div>
@@ -325,6 +327,7 @@
       Pallokuvioissa tausta on valkoinen. Ristikkokuviossa tausta on musta.
       Kalibroinnissa annetaan punaisen ja vihreän sävyindeksit, näytön mittakalibrointi
       <span class="kbd">px/mm</span> sekä tutkimusetäisyys metreinä.
+      Pallokuvioiden halkaisija on 11 cm etäisyydellä 5,75 m. Ristikkokuvion koko skaalautuu samalla periaatteella.
     </div>
   </div>
 
@@ -377,7 +380,7 @@
       9:'#20E020', 10:'#00AA00', 11:'#008F00', 12:'#007A00'
     };
 
-    const STORAGE_KEY = 'fd_test_calibration_v4';
+    const STORAGE_KEY = 'fd_test_calibration_v5';
     const REFERENCE_DISTANCE_M = 5.75;
     const REFERENCE_SIZE_MM = 110;
 
