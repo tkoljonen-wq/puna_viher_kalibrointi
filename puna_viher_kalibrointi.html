@@ -735,7 +735,7 @@
       renderMeasure();
     }
 
-    function finish() {
+    async function finish() {
       if (state.linePx === null) {
         setStatus('Tee ensin mittakalibrointi.', 'err');
         return;
@@ -775,7 +775,7 @@ line${MM}mmPx: ${state.linePx.toFixed(2)}`;
       $('backColorsBtn').classList.add('hidden');
 
       // Save as defaults for next session
-      saveDefaults();
+      await saveDefaults();
     }
 
     // ---- Persistent storage ----
@@ -826,7 +826,7 @@ line${MM}mmPx: ${state.linePx.toFixed(2)}`;
       render();
     }
 
-    function factoryReset() {
+    async function factoryReset() {
       state.red   = { ...FACTORY_RED };
       state.green = { ...FACTORY_GREEN };
       state.linePx = FACTORY_LINEPX;
@@ -841,7 +841,7 @@ line${MM}mmPx: ${state.linePx.toFixed(2)}`;
       setStatus('Palautettu tehdasasetuksiin.', 'ok');
       render();
       // Clear storage
-      try { window.storage.delete('calibration-defaults'); } catch(e) {}
+      try { await window.storage.delete('calibration-defaults'); } catch(e) {}
     }
 
     // Init: load saved defaults and apply
