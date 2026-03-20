@@ -11,10 +11,6 @@
       --text: #f2f2f2;
       --muted: #b8b8b8;
       --border: #3a3a3a;
-      --warning-bg: #241d00;
-      --warning-border: #6d5a00;
-      --warning-text: #f1db84;
-
       --bar-red: #e20000;
       --bar-green: #009d00;
 
@@ -52,17 +48,6 @@
       border-radius: 999px;
     }
 
-    .warning {
-      margin-bottom: 12px;
-      font-size: 14px;
-      line-height: 1.45;
-      color: var(--warning-text);
-      background: var(--warning-bg);
-      border: 1px solid var(--warning-border);
-      border-radius: 10px;
-      padding: 10px 12px;
-    }
-
     .toolbar {
       display: flex;
       flex-wrap: wrap;
@@ -95,17 +80,6 @@
       color: var(--muted);
       max-width: 760px;
       line-height: 1.35;
-    }
-
-    .legend {
-      margin-top: 12px;
-      font-size: 14px;
-      color: var(--muted);
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
-      line-height: 1.5;
     }
 
     .stage {
@@ -146,13 +120,11 @@
       display: block;
     }
 
-    /* Mallet (pallo) kuvat: leveys & korkeus = --target-size-px */
     .round-figure {
       width: var(--target-size-px);
       height: var(--target-size-px);
     }
 
-    /* Ristikkokuva: skaalataan niin että sakaran kokonaispituus = --grid-size-px */
     .grid-figure {
       width: var(--grid-size-px);
       height: var(--grid-size-px);
@@ -221,16 +193,6 @@
       margin-top: 8px;
     }
 
-    .kbd {
-      font-family: Consolas, monospace;
-      padding: 1px 6px;
-      border: 1px solid #666;
-      border-radius: 6px;
-      background: #1f1f1f;
-      color: #fff;
-      white-space: nowrap;
-    }
-
     @media (max-width: 860px) {
       .status {
         width: 100%;
@@ -251,22 +213,16 @@
       <div class="verify-line" id="verifyLine" aria-label="200 mm tarkistusviiva"></div>
     </div>
 
-    <div class="warning" id="warningBox">
-      Varmista että selainzoomi on 100 %. Tarkista 200 mm viiva mittatikulla ennen testiä.
-    </div>
-
     <div class="toolbar">
       <button id="prevImage" type="button">← Edellinen</button>
       <button id="nextImage" type="button">Seuraava →</button>
       <button id="openCalibration" type="button">Kalibroi</button>
-      <button id="resetDefault" type="button">Palauta oletus</button>
       <div class="status" id="statusText"></div>
     </div>
 
     <div class="stage">
       <div class="figure-host" id="figureHost" tabindex="0" aria-label="Testikuva-alue">
 
-        <!-- Kuva 1: Mallet pysty -->
         <svg id="figure1" class="figure round-figure active" viewBox="0 0 512 512" aria-label="Kuva 1 – Mallet pysty">
           <defs>
             <clipPath id="cp1">
@@ -287,7 +243,6 @@
           </g>
         </svg>
 
-        <!-- Kuva 2: Mallet vaaka -->
         <svg id="figure2" class="figure round-figure" viewBox="0 0 512 512" aria-label="Kuva 2 – Mallet vaaka">
           <defs>
             <clipPath id="cp2">
@@ -308,7 +263,6 @@
           </g>
         </svg>
 
-        <!-- Kuva 3: Ristikko -->
         <svg id="figure3" class="figure grid-figure" viewBox="0 0 2047 1535" aria-label="Kuva 3 – Ristikko">
           <rect x="0" y="0" width="2047" height="1535" fill="#000000"/>
           <g class="bar-red"><rect x="1027" y="250" width="77" height="1044"/></g>
@@ -319,15 +273,6 @@
       </div>
     </div>
 
-    <div class="legend">
-      Näytöllä on aina yksi kuva kerrallaan. Kuvien välillä vaihdetaan nuolinäppäimillä
-      <span class="kbd">←</span> ja <span class="kbd">→</span>.
-      Pallokuvioissa (Mallet) mustan ympyrän halkaisija on 10,8 cm etäisyydellä 5,75 m.
-      Ristikkokuviossa sakaran kokonaispituus on 11 cm etäisyydellä 5,75 m.
-      Kalibroinnissa annetaan punaisen ja vihreän RGB-arvot, näytön mittakalibrointi
-      <span class="kbd">px/mm</span> sekä tutkimusetäisyys metreinä.
-      Kuvien fyysinen koko skaalautuu tutkimusetäisyyden mukaan.
-    </div>
   </div>
 
   <dialog id="calibrationDialog">
@@ -383,20 +328,10 @@
   </dialog>
 
   <script>
-    /* ===== Vakiot ===== */
-
-    // Mallet-pallon halkaisija mm @ viiteetäisyys
-    const MALLET_DIAMETER_MM = 108;        // 10,8 cm
+    const MALLET_DIAMETER_MM = 108;
     const REFERENCE_DISTANCE_M = 5.75;
-
-    // Ristikon sakaran kokonaispituus mm @ viiteetäisyys
-    // SVG:ssä pisin sakara on punainen pystysuora: korkeus 1044 SVG-yksikköä
-    // viewBox 2047×1535 → sakara/viewBox-suhde lasketaan myöhemmin
-    const GRID_ARM_LENGTH_MM = 110;        // 11 cm
-
+    const GRID_ARM_LENGTH_MM = 110;
     const STORAGE_KEY = 'fd_test_calibration_v6';
-
-    /* ===== Apufunktiot ===== */
 
     const $ = id => document.getElementById(id);
     const figureIds = ['figure1', 'figure2', 'figure3'];
@@ -437,8 +372,6 @@
         e.screenHeight !== now.screenHeight
       );
     }
-
-    /* ===== Oletusarvot ===== */
 
     function getDefaultCalibration() {
       return {
@@ -481,31 +414,20 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(cal));
     }
 
-    /* ===== Skaalauslaskenta ===== */
-
-    // Mallet: pallon fyysinen halkaisija mm tietyllä etäisyydellä
     function malletDiameterMm(distanceM) {
       return MALLET_DIAMETER_MM * (distanceM / REFERENCE_DISTANCE_M);
     }
 
-    // Ristikko: sakaran fyysinen kokonaispituus mm tietyllä etäisyydellä
     function gridArmLengthMm(distanceM) {
       return GRID_ARM_LENGTH_MM * (distanceM / REFERENCE_DISTANCE_M);
     }
 
-    /* ===== Värien asettaminen SVG-elementteihin ===== */
-
     function applyColors(redHex, greenHex) {
-      // Kaikki .bar-red ja .bar-green g-elementtien lapset saavat fill-värin
       document.querySelectorAll('.bar-red > rect').forEach(el => el.setAttribute('fill', redHex));
       document.querySelectorAll('.bar-green > rect').forEach(el => el.setAttribute('fill', greenHex));
-
-      // CSS-muuttujat varmuudeksi
       document.documentElement.style.setProperty('--bar-red', redHex);
       document.documentElement.style.setProperty('--bar-green', greenHex);
     }
-
-    /* ===== Pääkalibroinnin soveltaminen ===== */
 
     function applyCalibration(cal) {
       const redHex = rgbToHex(cal.red.r, cal.red.g, cal.red.b);
@@ -515,41 +437,21 @@
 
       applyColors(redHex, greenHex);
 
-      // 200 mm tarkistusviiva
       document.documentElement.style.setProperty('--line-200mm-px', `${pxmm * 200}px`);
 
-      // Mallet: SVG viewBox 512×512, ympyrän halkaisija = 480 SVG-yksikköä (r=240)
-      // Fyysinen halkaisija pikseleinä:
       const malletPhysMm = malletDiameterMm(dist);
       const malletPhysPx = malletPhysMm * pxmm;
-      // SVG:n viewBox on 512, ympyrä d=480 → SVG:n renderöintikoko = malletPhysPx * (512/480)
       const malletSvgPx = malletPhysPx * (512 / 480);
       document.documentElement.style.setProperty('--target-size-px', `${malletSvgPx}px`);
 
-      // Ristikko: pisin sakara SVG:ssä on punainen pystypalkki, korkeus 1044 yksikköä
-      // viewBox 2047×1535
-      // Sakaran fyysinen pituus pikseleinä:
       const gridPhysMm = gridArmLengthMm(dist);
       const gridPhysPx = gridPhysMm * pxmm;
-      // SVG:n renderöintikoko: pisin sakara on 1044 SVG-yksikköä korkea
-      // SVG piirretään siten, että viewBox-korkeuden suhde sakaraan antaa koon:
-      // mutta koska kuva on viewBox="0 0 2047 1535" ja käytämme CSS width+height,
-      // ja aspect ratio säilyy, meidän pitää laskea oikein.
-      // Sakara 1044 yksiköistä mahtuu viewBox-korkeuteen 1535.
-      // Jos asetamme SVG:n korkeuden niin, että 1044 yksikköä = gridPhysPx:
-      // svgHeight = gridPhysPx * (1535 / 1044)
-      // svgWidth = svgHeight * (2047 / 1535)
       const gridSvgHeight = gridPhysPx * (1535 / 1044);
       const gridSvgWidth = gridSvgHeight * (2047 / 1535);
-      // Käytetään CSS-muuttujia width ja height
-      // Koska .grid-figure käyttää vain width+height ja SVG:n viewBox hoitaa aspektin,
-      // asetetaan molemmat. SVG säilyttää aspect ration, joten suurempi mitta dominoi.
-      // Varmistetaan oikea koko asettamalla width ja height erikseen.
       const fig3 = $('figure3');
       fig3.style.width = gridSvgWidth + 'px';
       fig3.style.height = gridSvgHeight + 'px';
 
-      // Statusrivi
       $('statusText').textContent =
         `Kuva ${currentFigureIndex + 1}/3 · ` +
         `Punainen rgb(${cal.red.r}, ${cal.red.g}, ${cal.red.b}) · ` +
@@ -560,37 +462,12 @@
         `Ristikko ${gridPhysMm.toFixed(1)} mm`;
     }
 
-    /* ===== Varoitukset ===== */
-
-    function updateWarnings() {
-      const saved = getSavedCalibration();
-      const warnings = [
-        'Varmista että selainzoomi on 100 %. Tarkista 200 mm viiva mittatikulla ennen testiä.'
-      ];
-
-      if (isEnvironmentDifferent(saved)) {
-        warnings.push('Selain- tai näyttöympäristö on muuttunut kalibroinnin jälkeen. Tee kalibrointi uudelleen.');
-      }
-
-      const malletPhysPx = malletDiameterMm(saved.viewingDistanceM) * saved.pxPerMm * (512 / 480);
-      const viewportLimit = Math.min(window.innerWidth, window.innerHeight) * 0.92;
-
-      if (malletPhysPx > viewportLimit) {
-        warnings.push('Valitulla etäisyydellä ja px/mm-arvolla kuva ei välttämättä mahdu kokonaan ruudulle.');
-      }
-
-      $('warningBox').textContent = warnings.join(' ');
-    }
-
-    /* ===== Kuvanvaihto ===== */
-
     function showFigure(index) {
       currentFigureIndex = (index + figureIds.length) % figureIds.length;
       figureIds.forEach((id, i) => {
         $(id).classList.toggle('active', i === currentFigureIndex);
       });
 
-      // Mallet-kuvat (0, 1) = valkoinen tausta, Ristikko (2) = musta tausta
       const stage = document.querySelector('.stage');
       stage.classList.toggle('bg-white', currentFigureIndex <= 1);
 
@@ -600,8 +477,6 @@
 
     function showNextFigure() { showFigure(currentFigureIndex + 1); }
     function showPrevFigure() { showFigure(currentFigureIndex - 1); }
-
-    /* ===== Kalibrointidialogi ===== */
 
     $('prevImage').addEventListener('click', showPrevFigure);
     $('nextImage').addEventListener('click', showNextFigure);
@@ -622,13 +497,6 @@
 
     $('cancelCalibration').addEventListener('click', () => {
       $('calibrationDialog').close();
-    });
-
-    $('resetDefault').addEventListener('click', () => {
-      const defaults = getDefaultCalibration();
-      saveCalibration(defaults);
-      applyCalibration(defaults);
-      updateWarnings();
     });
 
     $('saveCalibration').addEventListener('click', () => {
@@ -668,10 +536,7 @@
       saveCalibration(cal);
       applyCalibration(cal);
       $('calibrationDialog').close();
-      updateWarnings();
     });
-
-    /* ===== Näppäimet ===== */
 
     document.addEventListener('keydown', (event) => {
       if ($('calibrationDialog').open) return;
@@ -685,18 +550,11 @@
       }
     });
 
-    /* ===== Ympäristömuutokset ===== */
-
-    window.addEventListener('resize', updateWarnings);
     if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', updateWarnings);
     }
-
-    /* ===== Käynnistys ===== */
 
     const initial = getSavedCalibration();
     applyCalibration(initial);
-    updateWarnings();
     showFigure(0);
     $('figureHost').focus();
   </script>
