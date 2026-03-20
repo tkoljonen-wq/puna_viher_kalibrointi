@@ -17,7 +17,7 @@
       --muted: #6e6e82;
       --dim: #44445a;
       --red-r: 226; --red-g: 0; --red-b: 0;
-      --green-r: 0; --green-g: 157; --green-b: 0;
+      --green-r: 0; --green-g: 127; --green-b: 0;
       --accent: #5bf;
       --mm-line-px: 200;
     }
@@ -469,7 +469,7 @@
             <rect x="239" y="111.5" width="34" height="34" fill="#ffffff"/>
             <rect x="228" y="355.5" width="56" height="56" fill="#000000"/>
             <rect x="239" y="366.5" width="34" height="34" fill="#ffffff"/>
-            <rect id="svgGreenBar" x="42" y="237" width="152" height="38" fill="rgb(0,157,0)"/>
+            <rect id="svgGreenBar" x="42" y="237" width="152" height="38" fill="rgb(0,127,0)"/>
             <rect id="svgRedBar" x="318" y="237" width="152" height="38" fill="rgb(226,0,0)"/>
           </g>
         </svg>
@@ -514,6 +514,7 @@
       <button class="btn hidden" id="mmPlusBtn" type="button">+ Pidennä</button>
       <button class="btn primary" id="confirmBtn" type="button">Vahvista kaikki</button>
       <button class="btn danger" id="restartBtn" type="button">Nollaa</button>
+      <button class="btn" id="factoryBtn" type="button" title="Palauta tehdasasetukset">Tehdasasetukset</button>
       <span class="status-text" id="statusEl"></span>
     </div>
   </main>
@@ -556,10 +557,10 @@
     <div class="sb-section">
       <div class="sb-title">Vihreä</div>
       <div class="color-block">
-        <div class="color-block-stripe" style="background:rgb(0,157,0)"></div>
+        <div class="color-block-stripe" style="background:rgb(0,127,0)"></div>
         <div class="cb-header">
-          <span class="cb-hex" id="greenHex">#009D00</span>
-          <div class="cb-swatch" id="greenSwatch" style="background:rgb(0,157,0)"></div>
+          <span class="cb-hex" id="greenHex">#007F00</span>
+          <div class="cb-swatch" id="greenSwatch" style="background:rgb(0,127,0)"></div>
         </div>
         <div class="ch-row">
           <span class="ch-lbl" style="color:#f66">R</span>
@@ -571,8 +572,8 @@
         <div class="ch-row">
           <span class="ch-lbl" style="color:#6d6">G</span>
           <button class="ch-btn" data-color="green" data-ch="g" data-dir="-1">−</button>
-          <div class="ch-val" id="green-g-val">157</div>
-          <input type="range" class="ch-slider" id="green-g-slider" min="0" max="255" value="157" data-color="green" data-ch="g">
+          <div class="ch-val" id="green-g-val">127</div>
+          <input type="range" class="ch-slider" id="green-g-slider" min="0" max="255" value="127" data-color="green" data-ch="g">
           <button class="ch-btn" data-color="green" data-ch="g" data-dir="1">+</button>
         </div>
         <div class="ch-row">
@@ -617,7 +618,7 @@
 
     const state = {
       red:   { r: 226, g: 0, b: 0 },
-      green: { r: 0,   g: 157, b: 0 },
+      green: { r: 0,   g: 127, b: 0 },
       linePx: null,
       mmMode: false,
       done: false
@@ -716,7 +717,7 @@
     function openMm() {
       if (state.done) return;
       state.mmMode = true;
-      if (!state.linePx) state.linePx = 200;
+      if (!state.linePx) state.linePx = FACTORY_LINEPX;
       setStatus('Säädä viiva 200 mm pituuteen. ← pidempi, → lyhyempi.', 'ok');
       render();
     }
@@ -772,18 +773,97 @@ line${MM}mmPx: ${state.linePx.toFixed(2)}`;
       $('mmMinusBtn').classList.add('hidden');
       $('mmPlusBtn').classList.add('hidden');
       $('backColorsBtn').classList.add('hidden');
+
+      // Save as defaults for next session
+      saveDefaults();
     }
 
+    // ---- Persistent storage ----
+
+    async function saveDefaults() {
+      try {
+        const data = {
+          red: { ...state.red },
+          green: { ...state.green },
+          linePx: state.linePx
+        };
+        state.savedRed   = { ...state.red };
+        state.savedGreen = { ...state.green };
+        state.savedLinePx = state.linePx;
+        await window.storage.set('calibration-defaults', JSON.stringify(data));
+      } catch (e) {
+        console.error('Tallennus epäonnistui:', e);
+      }
+    }
+
+    async function loadDefaults() {
+      try {
+        const result = await window.storage.get('calibration-defaults');
+        if (result && result.value) {
+          return JSON.parse(result.value);
+        }
+      } catch (e) {
+        // No saved data — use hard-coded defaults
+      }
+      return null;
+    }
+
+    const FACTORY_RED   = { r: 226, g: 0, b: 0 };
+    const FACTORY_GREEN = { r: 0, g: 127, b: 0 };
+    const FACTORY_LINEPX = 4.245 * MM; // 849 px = 4.245 px/mm × 200 mm
+
     function restart() {
-      state.red   = { r: 226, g: 0, b: 0 };
-      state.green = { r: 0, g: 157, b: 0 };
-      state.linePx = null;
+      // Restart uses saved defaults (last confirmed calibration), not factory values
+      state.red   = { ...state.savedRed   || FACTORY_RED };
+      state.green = { ...state.savedGreen || FACTORY_GREEN };
+      state.linePx = state.savedLinePx || FACTORY_LINEPX;
       state.mmMode = false;
       state.done = false;
       $('resultsOverlay').classList.add('hidden');
       $('confirmBtn').disabled = false;
       $('measureBtn').classList.remove('hidden');
-      setStatus('Nollattu.', 'ok');
+      setStatus('Nollattu edellisen kalibroinnin arvoihin.', 'ok');
+      render();
+    }
+
+    function factoryReset() {
+      state.red   = { ...FACTORY_RED };
+      state.green = { ...FACTORY_GREEN };
+      state.linePx = FACTORY_LINEPX;
+      state.savedRed = null;
+      state.savedGreen = null;
+      state.savedLinePx = null;
+      state.mmMode = false;
+      state.done = false;
+      $('resultsOverlay').classList.add('hidden');
+      $('confirmBtn').disabled = false;
+      $('measureBtn').classList.remove('hidden');
+      setStatus('Palautettu tehdasasetuksiin.', 'ok');
+      render();
+      // Clear storage
+      try { window.storage.delete('calibration-defaults'); } catch(e) {}
+    }
+
+    // Init: load saved defaults and apply
+    async function init() {
+      const saved = await loadDefaults();
+      if (saved) {
+        state.red   = { ...saved.red };
+        state.green = { ...saved.green };
+        state.linePx = saved.linePx;
+        // Keep saved copies for restart
+        state.savedRed   = { ...saved.red };
+        state.savedGreen = { ...saved.green };
+        state.savedLinePx = saved.linePx;
+        setStatus('Ladattu edellisen kalibroinnin arvot.', 'ok');
+      } else {
+        state.red = { ...FACTORY_RED };
+        state.green = { ...FACTORY_GREEN };
+        state.linePx = FACTORY_LINEPX;
+        state.savedRed = null;
+        state.savedGreen = null;
+        state.savedLinePx = null;
+      }
       render();
     }
 
@@ -823,6 +903,7 @@ line${MM}mmPx: ${state.linePx.toFixed(2)}`;
     $('restartBtn').addEventListener('click', restart);
     $('restartBtn2').addEventListener('click', restart);
     $('copyBtn').addEventListener('click', copyResults);
+    $('factoryBtn').addEventListener('click', factoryReset);
 
     // Keyboard
     document.addEventListener('keydown', (e) => {
@@ -853,7 +934,7 @@ line${MM}mmPx: ${state.linePx.toFixed(2)}`;
     });
 
     // Init
-    render();
+    init();
   </script>
 </body>
 </html>
