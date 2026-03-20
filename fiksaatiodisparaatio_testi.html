@@ -16,7 +16,6 @@
 
       --line-200mm-px: 200px;
       --target-size-px: 220px;
-      --grid-size-px: 220px;
     }
 
     * { box-sizing: border-box; }
@@ -115,11 +114,6 @@
     .round-figure {
       width: var(--target-size-px);
       height: var(--target-size-px);
-    }
-
-    .grid-figure {
-      width: var(--grid-size-px);
-      height: var(--grid-size-px);
     }
 
     dialog {
@@ -248,13 +242,6 @@
           </g>
         </svg>
 
-        <svg id="figure3" class="figure grid-figure" viewBox="0 0 2047 1535" aria-label="Kuva 3 – Ristikko">
-          <rect x="0" y="0" width="2047" height="1535" fill="#000000"/>
-          <g class="bar-red"><rect x="1027" y="250" width="77" height="1044"/></g>
-          <g class="bar-green"><rect x="535" y="755" width="1061" height="78"/></g>
-          <rect x="1027" y="755" width="77" height="78" fill="#000000"/>
-        </svg>
-
       </div>
     </div>
 
@@ -315,11 +302,10 @@
   <script>
     const MALLET_DIAMETER_MM = 108;
     const REFERENCE_DISTANCE_M = 5.75;
-    const GRID_ARM_LENGTH_MM = 110;
     const STORAGE_KEY = 'fd_test_calibration_v6';
 
     const $ = id => document.getElementById(id);
-    const figureIds = ['figure1', 'figure2', 'figure3'];
+    const figureIds = ['figure1', 'figure2'];
     let currentFigureIndex = 0;
 
     function clampByte(v) { return Math.max(0, Math.min(255, Math.round(v))); }
@@ -403,10 +389,6 @@
       return MALLET_DIAMETER_MM * (distanceM / REFERENCE_DISTANCE_M);
     }
 
-    function gridArmLengthMm(distanceM) {
-      return GRID_ARM_LENGTH_MM * (distanceM / REFERENCE_DISTANCE_M);
-    }
-
     function applyColors(redHex, greenHex) {
       document.querySelectorAll('.bar-red > rect').forEach(el => el.setAttribute('fill', redHex));
       document.querySelectorAll('.bar-green > rect').forEach(el => el.setAttribute('fill', greenHex));
@@ -428,14 +410,6 @@
       const malletPhysPx = malletPhysMm * pxmm;
       const malletSvgPx = malletPhysPx * (512 / 480);
       document.documentElement.style.setProperty('--target-size-px', `${malletSvgPx}px`);
-
-      const gridPhysMm = gridArmLengthMm(dist);
-      const gridPhysPx = gridPhysMm * pxmm;
-      const gridSvgHeight = gridPhysPx * (1535 / 1044);
-      const gridSvgWidth = gridSvgHeight * (2047 / 1535);
-      const fig3 = $('figure3');
-      fig3.style.width = gridSvgWidth + 'px';
-      fig3.style.height = gridSvgHeight + 'px';
     }
 
     function showFigure(index) {
@@ -445,7 +419,7 @@
       });
 
       const stage = document.querySelector('.stage');
-      stage.classList.toggle('bg-white', currentFigureIndex <= 1);
+      stage.classList.add('bg-white');
 
       const saved = getSavedCalibration();
       applyCalibration(saved);
