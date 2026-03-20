@@ -74,14 +74,6 @@
     button:hover { background: #2a2a2a; }
     button:active { transform: translateY(1px); }
 
-    .status {
-      margin-left: auto;
-      font-size: 14px;
-      color: var(--muted);
-      max-width: 760px;
-      line-height: 1.35;
-    }
-
     .stage {
       min-height: 72vh;
       background: #000000;
@@ -194,12 +186,6 @@
     }
 
     @media (max-width: 860px) {
-      .status {
-        width: 100%;
-        margin-left: 0;
-        max-width: none;
-      }
-
       .stage {
         min-height: 62vh;
         padding: 14px;
@@ -217,7 +203,6 @@
       <button id="prevImage" type="button">← Edellinen</button>
       <button id="nextImage" type="button">Seuraava →</button>
       <button id="openCalibration" type="button">Kalibroi</button>
-      <div class="status" id="statusText"></div>
     </div>
 
     <div class="stage">
@@ -451,15 +436,6 @@
       const fig3 = $('figure3');
       fig3.style.width = gridSvgWidth + 'px';
       fig3.style.height = gridSvgHeight + 'px';
-
-      $('statusText').textContent =
-        `Kuva ${currentFigureIndex + 1}/3 · ` +
-        `Punainen rgb(${cal.red.r}, ${cal.red.g}, ${cal.red.b}) · ` +
-        `Vihreä rgb(${cal.green.r}, ${cal.green.g}, ${cal.green.b}) · ` +
-        `${pxmm.toFixed(4)} px/mm · ` +
-        `Etäisyys ${dist.toFixed(2)} m · ` +
-        `Pallo ⌀ ${malletPhysMm.toFixed(1)} mm · ` +
-        `Ristikko ${gridPhysMm.toFixed(1)} mm`;
     }
 
     function showFigure(index) {
